@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Student {
 
-    private final long index;
+    private long index;
     private final String firstName;
     private final String lastName;
     private final Date birthday;
@@ -32,7 +32,7 @@ public class Student {
     }
 
     public Student(long index, String firstName, String lastName, String birthday){
-        Student student = new Student.StudentBuilder().index()
+        Student student = new Student.StudentBuilder().index(index)
                 .firstName(firstName)
                 .lastName(lastName)
                 .birthday(birthday)
@@ -45,7 +45,7 @@ public class Student {
     }
 
     public Student(long index, String firstName, String lastName, String birthday, List<Grade> grades){
-        Student student = new StudentBuilder().index()
+        Student student = new StudentBuilder().index(index)
                 .firstName(firstName)
                 .lastName(lastName)
                 .birthday(birthday)
@@ -59,7 +59,7 @@ public class Student {
     }
 
     public Student(long index, String firstName, String lastName, String birthday, Grade grade){
-        Student student = new StudentBuilder().index()
+        Student student = new StudentBuilder().index(index)
                 .firstName(firstName)
                 .lastName(lastName)
                 .birthday(birthday)
@@ -72,9 +72,7 @@ public class Student {
         this.grades = student.getGrades();
     }
 
-    public long getIndex(){
-        return this.index;
-    }
+    public long getIndex(){ return this.index; }
 
     public String getFirstName() {
         return this.firstName;
@@ -151,5 +149,34 @@ public class Student {
             return new Student(this);
         }
 
+    }
+
+    public void addGrade(Grade grade) {
+        grades.add(grade);
+    }
+
+    public void setGradeOnList(Grade grade) {
+        int i = 0;
+        long id = grade.getId();
+        for (Grade g : grades) {
+            if(g.getId() == id) {
+                grades.set(i, grade);
+                return;
+            }
+            i++;
+        }
+    }
+
+    public void rmoveGradeOnList(Grade grade) {
+        int i = 0;
+        long id = grade.getId();
+        for (Grade g : grades) {
+            System.out.println(g.getId());
+            if(g.getId() == id) {
+                grades.remove(i);
+                return;
+            }
+            i++;
+        }
     }
 }

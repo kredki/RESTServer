@@ -15,7 +15,7 @@ public class DateParser {
         try {
             t = ft.parse(dateString);
             this.date = t;
-            System.out.println("new date: " + t);
+            //System.out.println("new date: " + t);
         } catch (ParseException e) {
             System.out.println("Unparseable using " + ft);
         }
@@ -34,7 +34,7 @@ public class DateParser {
         try {
             t = ft.parse(dateString);
             this.date = t;
-            System.out.println("new date: " + t);
+            //System.out.println("new date: " + t);
         } catch (ParseException e) {
             System.out.println("Unparseable using " + ft);
         }

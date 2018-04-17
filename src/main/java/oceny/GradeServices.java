@@ -1,28 +1,17 @@
 package oceny;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Path("/")
 public class GradeServices {
     private final CopyOnWriteArrayList<Grade> cList = GradeList.getInstance();
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
-
-    /*@GET
-    @Path("/courses")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getAllStudents() {
-        return "---Students List---\n"
-                + cList.stream()
-                .map(c -> c.toString())
-                .collect(Collectors.joining("\n"));
-    }*/
 
     @GET
     @Path("/students/{index}/grades")
@@ -41,6 +30,23 @@ public class GradeServices {
 
         } else {
             return "Student not found";
+        }
+    }
+
+    @POST
+    @Path("/students/{index}/grades")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addStudent(@PathParam("index") long index, Grade grade){
+        Optional<Student> match = studentList.stream()
+                .filter(c -> c.getIndex() == index)
+                .findFirst();
+
+        if (match.isPresent()) {
+            Student student = match.get();
+            student.addGrade(grade);
+            return Response.status(Response.Status.OK).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
@@ -66,6 +72,59 @@ public class GradeServices {
 
         } else {
             return "Student not found";
+        }
+    }
+
+    @PUT
+    @Path("/students/{index}/grades/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateStudent(@PathParam("index") long index, Grade grade){
+        int matchIdx = 0;
+        int matchIdx2 = 0;
+        Optional<Grade> match = cList.stream()
+                .filter(c -> c.getId() == grade.getId())
+                .findFirst();
+        if (match.isPresent()) {
+            matchIdx = cList.indexOf(match.get());
+            Optional<Student> match2 = studentList.stream()
+                    .filter(c -> c.getIndex() == index)
+                    .findFirst();
+            if(match2.isPresent()) {
+                matchIdx2 = studentList.indexOf(match2.get());
+                cList.set(matchIdx, grade);
+                Student student =match2.get();
+                student.setGradeOnList(grade);
+                studentList.set(matchIdx2, student);
+                return Response.status(Response.Status.OK).build();
+            } else {
+                Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @DELETE
+    @Path("/students/{index}/grades/{id}")
+    public void deleteStudent(@PathParam("index") long index, @PathParam("id") long id){
+        Optional<Student> match = studentList.stream()
+                .filter(c -> c.getIndex() == index)
+                .findFirst();
+        if(match.isPresent()) {
+            Predicate<Grade> grade = c -> c.getId() == id;
+            if (!cList.removeIf(grade)) {
+                throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
+            } else {
+                Optional<Grade> match2 = cList.stream()
+                        .filter(c -> c.getId() == id)
+                        .findFirst();
+                if(match2.isPresent()) {
+                    match.get().rmoveGradeOnList(match2.get());
+                }
+            }
+        } else {
+            Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 }
