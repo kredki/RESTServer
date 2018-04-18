@@ -17,7 +17,6 @@ public class GradeServices {
     @Path("/students/{index}/grades")
     @Produces(MediaType.TEXT_PLAIN)
     public String getStudentGrades(@PathParam("index") long index) {
-        System.out.println("looking for grades of student " + index);
         Optional<Student> match
                 = studentList.stream()
                 .filter(c -> c.getIndex() == index)
@@ -36,7 +35,7 @@ public class GradeServices {
     @POST
     @Path("/students/{index}/grades")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addStudent(@PathParam("index") long index, Grade grade){
+    public Response addGrade(@PathParam("index") long index, Grade grade){
         Optional<Student> match = studentList.stream()
                 .filter(c -> c.getIndex() == index)
                 .findFirst();
@@ -54,7 +53,6 @@ public class GradeServices {
     @Path("/students/{index}/grades/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getStudentGradeById(@PathParam("index") long index, @PathParam("id") long id) {
-        System.out.println("Looking for grade " + id + "of student " + index);
         Optional<Student> match
                 = studentList.stream()
                 .filter(c -> c.getIndex() == index)
@@ -78,7 +76,7 @@ public class GradeServices {
     @PUT
     @Path("/students/{index}/grades/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateStudent(@PathParam("index") long index, Grade grade){
+    public Response updateGrade(@PathParam("index") long index, Grade grade){
         int matchIdx = 0;
         int matchIdx2 = 0;
         Optional<Grade> match = cList.stream()
@@ -107,21 +105,22 @@ public class GradeServices {
 
     @DELETE
     @Path("/students/{index}/grades/{id}")
-    public void deleteStudent(@PathParam("index") long index, @PathParam("id") long id){
+    public void deleteGrade(@PathParam("index") long index, @PathParam("id") long id){
         Optional<Student> match = studentList.stream()
                 .filter(c -> c.getIndex() == index)
                 .findFirst();
         if(match.isPresent()) {
-            Predicate<Grade> grade = c -> c.getId() == id;
-            if (!cList.removeIf(grade)) {
-                throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
-            } else {
-                Optional<Grade> match2 = cList.stream()
-                        .filter(c -> c.getId() == id)
-                        .findFirst();
-                if(match2.isPresent()) {
-                    match.get().rmoveGradeOnList(match2.get());
+            Optional<Grade> match2 = cList.stream()
+                    .filter(c -> c.getId() == id)
+                    .findFirst();
+            if(match2.isPresent()) {
+                match.get().rmoveGradeOnList(match2.get());
+                Predicate<Grade> grade = c -> c.getId() == id;
+                if (!cList.removeIf(grade)) {
+                    throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
                 }
+            } else {
+                throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
             }
         } else {
             Response.status(Response.Status.NOT_FOUND).build();

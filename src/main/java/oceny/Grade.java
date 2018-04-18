@@ -9,7 +9,7 @@ public class Grade {
     private final long id;
     private final float value;
     private Date date;
-    private final Course course;
+    private Course course;
     private static final AtomicLong counter = new AtomicLong(100);
 
     private Grade(Grade.GradeBuilder builder){

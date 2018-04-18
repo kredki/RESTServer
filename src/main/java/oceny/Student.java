@@ -158,9 +158,9 @@ public class Student {
     public void setGradeOnList(Grade grade) {
         int i = 0;
         long id = grade.getId();
-        for (Grade g : grades) {
+        for (Grade g : this.grades) {
             if(g.getId() == id) {
-                grades.set(i, grade);
+                this.grades.set(i, grade);
                 return;
             }
             i++;
@@ -170,10 +170,9 @@ public class Student {
     public void rmoveGradeOnList(Grade grade) {
         int i = 0;
         long id = grade.getId();
-        for (Grade g : grades) {
-            System.out.println(g.getId());
+        for (Grade g : this.grades) {
             if(g.getId() == id) {
-                grades.remove(i);
+                this.grades.remove(i);
                 return;
             }
             i++;

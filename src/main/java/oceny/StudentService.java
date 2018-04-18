@@ -67,7 +67,7 @@ public class StudentService {
     public void deleteStudent(@PathParam("index") long index){
         Predicate<Student> student = c -> c.getIndex() == index;
         if (!cList.removeIf(student)) {
-            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new NotFoundException(new JsonError("Error", "Course " + index + " not found"));
         }
     }
 }
