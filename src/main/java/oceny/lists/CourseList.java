@@ -10,18 +10,9 @@ public class CourseList {
 
     static {
 
-        cList.add(new Course.CourseBuilder().id()
-                .name("Przedmiot1")
-                .lecturer("Jan Nowak")
-                .build());
-        cList.add(new Course.CourseBuilder().id()
-                .name("Przedmiot2")
-                .lecturer("Andrzej Kowalski")
-                .build());
-        cList.add(new Course.CourseBuilder().id()
-                .name("Przedmiot3")
-                .lecturer("Mateusz Kowalski")
-                .build());
+        cList.add(new Course("Przedmiot1", "Jan Nowak"));
+        cList.add(new Course("Przedmiot2", "Andrzej Kowalski"));
+        cList.add(new Course("Przedmiot3", "Mateusz Kowalski"));
     }
 
     private CourseList(){}

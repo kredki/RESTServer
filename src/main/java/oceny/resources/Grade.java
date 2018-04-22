@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @XmlRootElement
 public class Grade {
-    private final long id;
-    private final float value;
+    private long id;
+    private float value;
     private Date date;
     private Course course;
     private static final AtomicLong counter = new AtomicLong(100);
@@ -22,103 +22,47 @@ public class Grade {
     @XmlElement(name = "link")
     @XmlElementWrapper(name = "links")
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
+    private List<Link> links;
     */
 
-    public void setCourse(Course course) { this.course = course; }
-
-    private Grade(Grade.GradeBuilder builder){
-        this.id = builder.id;
-        this.value = builder.value;
-        this.date = builder.date;
-        this.course = builder.course;
+    public Grade(float value, String dateString, Course course) {
+        this.id = counter.getAndIncrement();
+        this.value = value;
+        DateParser dateParser = new DateParser(dateString);
+        Date date = dateParser.getDate();
+        this.date = date;
+        this.course = course;
     }
 
-    public Grade(){
-        Grade grade = new Grade.GradeBuilder().id().build();
-        this.id = grade.getId();
-        this.value = grade.getValue();
-        this.date = grade.getDate();
-        this.course = grade.getCourse();
+    public long getId() {
+        return id;
     }
 
-    public Grade(long id, float value, String date, Course course){
-        Grade grade = new GradeBuilder().id()
-                .value(value)
-                .date(date)
-                .course(course)
-                .build();
-        this.id = grade.getId();
-        this.value = grade.getValue();
-        this.date = grade.getDate();
-        this.course = grade.getCourse();
-    }
-
-    public long getId(){
-        return this.id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public float getValue() {
-        return this.value;
+        return value;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
     }
 
     public Date getDate() {
         return date;
     }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     public Course getCourse() {
-        return this.course;
+        return course;
     }
 
-    @Override
-    public String toString(){
-        return "ID: " + id
-                + " Value: " + value + "\n"
-                + " Date: " + date + "\n"
-                + " Course: " + course;
-    }
-
-    public static class GradeBuilder{
-        private long id;
-        private float value;
-        private Date date = new Date();
-        private Course course;
-
-        public Grade.GradeBuilder id(){
-            this.id = Grade.counter.getAndIncrement();
-            return this;
-        }
-
-        public Grade.GradeBuilder id(long id){
-            this.id = id;
-            return this;
-        }
-
-        public Grade.GradeBuilder value(float value){
-            this.value = (float) (0.5 * Math.round(value * 2));
-            if(this.value > 5) {
-                this.value = 5f;
-            } else if(this.value <= 2.5) {
-                this.value = 2f;
-            }
-            return this;
-        }
-
-        public Grade.GradeBuilder date(String dateString){
-            DateParser dateParser = new DateParser(dateString);
-            Date date = dateParser.getDate();
-            this.date = date;
-            return this;
-        }
-
-        public Grade.GradeBuilder course(Course course){
-            this.course = course;
-            return this;
-        }
-
-
-        public Grade build(){
-            return new Grade(this);
-        }
-
+    public void setCourse(Course course) {
+        this.course = course;
     }
 }

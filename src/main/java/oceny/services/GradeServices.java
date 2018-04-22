@@ -180,7 +180,7 @@ public class GradeServices {
                     .filter(c -> c.getId() == id)
                     .findFirst();
             if(match2.isPresent()) {
-                match.get().rmoveGradeOnList(match2.get());
+                match.get().removeGrade(match2.get());
                 Predicate<Grade> grade = c -> c.getId() == id;
                 if (!cList.removeIf(grade)) {
                     throw new oceny.NotFoundException(new JsonError("Error", "Grade " + id + " not found"));

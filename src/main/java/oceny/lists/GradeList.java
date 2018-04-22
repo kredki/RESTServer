@@ -11,53 +11,17 @@ public class GradeList {
     private static final CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
 
     static {
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.0f)
-                .date("2018-04-13")
-                .course(courseList.get(0))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.0f)
-                .date("2018-04-13")
-                .course(courseList.get(1))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.0f)
-                .date("2018-04-13")
-                .course(courseList.get(2))
-                .build());
+        cList.add(new Grade(3.0f, "2018-04-13", courseList.get(0)));
+        cList.add(new Grade(3.0f, "2018-04-13", courseList.get(1)));
+        cList.add(new Grade(3.0f, "2018-04-13", courseList.get(2)));
 
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.5f)
-                .date("2018-04-13")
-                .course(courseList.get(0))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.5f)
-                .date("2018-04-13")
-                .course(courseList.get(1))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(3.5f)
-                .date("2018-04-13")
-                .course(courseList.get(2))
-                .build());
+        cList.add(new Grade(3.5f, "2018-04-13", courseList.get(0)));
+        cList.add(new Grade(3.5f, "2018-04-13", courseList.get(1)));
+        cList.add(new Grade(3.5f,"2018-04-13", courseList.get(2)));
 
-        cList.add(new Grade.GradeBuilder().id()
-                .value(4.5f)
-                .date("2018-04-13")
-                .course(courseList.get(0))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(4.5f)
-                .date("2018-04-13")
-                .course(courseList.get(1))
-                .build());
-        cList.add(new Grade.GradeBuilder().id()
-                .value(4.5f)
-                .date("2018-04-13")
-                .course(courseList.get(0))
-                .build());
+        cList.add(new Grade(4.5f, "2018-04-13", courseList.get(0)));
+        cList.add(new Grade(4.5f, "2018-04-13", courseList.get(1)));
+        cList.add(new Grade(4.5f, "2018-04-13", courseList.get(0)));
     }
 
     private GradeList(){}
