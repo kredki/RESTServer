@@ -1,4 +1,12 @@
-package oceny;
+package oceny.services;
+
+import oceny.*;
+import oceny.lists.CourseList;
+import oceny.lists.GradeList;
+import oceny.lists.StudentList;
+import oceny.resources.Course;
+import oceny.resources.Grade;
+import oceny.resources.Student;
 
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,9 +85,9 @@ public class CourseService {
             return Response.ok().entity(match.get()).type(mediaType).build();
         } else {
             if (mediaType.equals(MediaType.APPLICATION_XML)) {
-                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
+                throw new oceny.NotFoundException(new XmlError("Error", "Course " + id + " not found"));
             } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
-                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+                throw new oceny.NotFoundException(new JsonError("Error", "Course " + id + " not found"));
             }
         }
         return null;
@@ -107,7 +115,7 @@ public class CourseService {
     public void deleteCourse(@PathParam("id") long id){
         Predicate<Course> course = c -> c.getId() == id;
         if (!cList.removeIf(course)) {
-            throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+            throw new oceny.NotFoundException(new JsonError("Error", "Course " + id + " not found"));
         }
     }
 }

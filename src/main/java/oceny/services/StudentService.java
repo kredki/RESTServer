@@ -1,20 +1,18 @@
-package oceny;
+package oceny.services;
 
-import org.glassfish.jersey.linking.InjectLink;
-import org.glassfish.jersey.linking.InjectLinks;
+import oceny.JsonError;
+import oceny.NotFoundException;
+import oceny.lists.StudentList;
+import oceny.XmlError;
+import oceny.resources.Student;
 
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Path("/")
 public class StudentService {
@@ -78,7 +76,7 @@ public class StudentService {
         if (match.isPresent()) {
             return match.get();
         } else {
-            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new oceny.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
 
@@ -93,7 +91,7 @@ public class StudentService {
         if (match.isPresent()) {
             return match.get();
         } else {
-            throw new NotFoundException(new XmlError("Error", "Student " + index + " not found"));
+            throw new oceny.NotFoundException(new XmlError("Error", "Student " + index + " not found"));
         }
     }
 

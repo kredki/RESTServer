@@ -1,4 +1,7 @@
-package oceny;
+package oceny.lists;
+
+import oceny.resources.Grade;
+import oceny.resources.Student;
 
 import java.util.ArrayList;
 import java.util.List;

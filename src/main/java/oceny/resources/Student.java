@@ -1,5 +1,6 @@
-package oceny;
+package oceny.resources;
 
+import oceny.DateParser;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 

@@ -1,4 +1,6 @@
-package oceny;
+package oceny.lists;
+
+import oceny.resources.Course;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;

@@ -1,4 +1,13 @@
-package oceny;
+package oceny.services;
+
+import oceny.lists.CourseList;
+import oceny.lists.GradeList;
+import oceny.JsonError;
+import oceny.NotFoundException;
+import oceny.lists.StudentList;
+import oceny.resources.Course;
+import oceny.resources.Grade;
+import oceny.resources.Student;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
@@ -9,7 +18,6 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Path("/")
 public class GradeServices {
@@ -52,7 +60,7 @@ public class GradeServices {
             //return match.get().getGrades().stream();
 
         } else {
-            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new oceny.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
 
@@ -175,7 +183,7 @@ public class GradeServices {
                 match.get().rmoveGradeOnList(match2.get());
                 Predicate<Grade> grade = c -> c.getId() == id;
                 if (!cList.removeIf(grade)) {
-                    throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
+                    throw new oceny.NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
                 }
             } else {
                 throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
