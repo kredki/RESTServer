@@ -26,4 +26,8 @@ public class NotFoundException extends WebApplicationException {
         super(Response.status(Response.Status.NOT_FOUND).entity(jse).type(MediaType.APPLICATION_JSON).build());
     }
 
+    public NotFoundException(XmlError xmle) {
+        super(Response.status(Response.Status.NOT_FOUND).entity(xmle).type(MediaType.APPLICATION_XML).build());
+    }
+
 }

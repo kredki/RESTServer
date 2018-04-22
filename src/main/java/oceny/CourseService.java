@@ -24,6 +24,20 @@ public class CourseService {
                 .collect(Collectors.joining("\n"));
     }
 
+    @GET
+    @Path("/courses")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CopyOnWriteArrayList<Course> getAllCoursesJson() {
+        return cList;
+    }
+
+    @GET
+    @Path("/courses")
+    @Produces(MediaType.APPLICATION_XML)
+    public CopyOnWriteArrayList<Course> getAllCoursesXml() {
+        return cList;
+    }
+
     @POST
     @Path("/courses")
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +49,7 @@ public class CourseService {
     @GET
     @Path("/courses/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getStudent(@PathParam("id") long id) {
+    public String getCourse(@PathParam("id") long id) {
         Optional<Course> match
                 = cList.stream()
                 .filter(c -> c.getId() == id)
@@ -45,6 +59,30 @@ public class CourseService {
         } else {
             return "Course not found";
         }
+    }
+
+    @GET
+    @Path("/courses/{id}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getCourseJson(@HeaderParam("Accept") String accepted, @PathParam("id") long id) {
+        String mediaType = MediaType.APPLICATION_JSON;
+        if(accepted != null) {
+            mediaType = accepted;
+        }
+        Optional<Course> match
+                = cList.stream()
+                .filter(c -> c.getId() == id)
+                .findFirst();
+        if (match.isPresent()) {
+            return Response.ok().entity(match.get()).type(mediaType).build();
+        } else {
+            if (mediaType.equals(MediaType.APPLICATION_XML)) {
+                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
+            } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
+                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+            }
+        }
+        return null;
     }
 
     @PUT

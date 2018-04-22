@@ -1,17 +1,21 @@
 package oceny;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/")
 public class GradeServices {
     private final CopyOnWriteArrayList<Grade> cList = GradeList.getInstance();
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
+    private final CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
 
     @GET
     @Path("/students/{index}/grades")
@@ -32,6 +36,51 @@ public class GradeServices {
         }
     }
 
+    @GET
+    @Path("/students/{index}/grades")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStudentGradesJson(@PathParam("index") long index) {
+        Optional<Student> match
+                = studentList.stream()
+                .filter(c -> c.getIndex() == index)
+                .findFirst();
+        if (match.isPresent()) {
+            List<Grade> grades = match.get().getGrades();
+            GenericEntity<List<Grade>> genericEntity = new GenericEntity<List<Grade>>(grades) {
+            };
+            return Response.ok(genericEntity).build();
+            //return match.get().getGrades().stream();
+
+        } else {
+            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+        }
+    }
+
+    /*@GET
+    @Path("/students/{index}/grades")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getStudentGrades(@HeaderParam("Accept") String accepted, @PathParam("index") long index) {
+        String mediaType = MediaType.APPLICATION_JSON;
+        if(accepted != null) {
+            mediaType = accepted;
+        }
+        Optional<Student> match
+                = studentList.stream()
+                .filter(c -> c.getIndex() == index)
+                .findFirst();
+        if (match.isPresent()) {
+            return Response.ok().entity(match.get().getGrades().stream()).type(mediaType).build();
+
+        } else {
+            if (mediaType.equals(MediaType.APPLICATION_XML)) {
+                throw new NotFoundException(new XmlError("Error", "Student " + index + " not found"));
+            } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
+                throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            }
+        }
+        return null;
+    }*/
+
     @POST
     @Path("/students/{index}/grades")
     @Produces(MediaType.APPLICATION_JSON)
@@ -41,9 +90,18 @@ public class GradeServices {
                 .findFirst();
 
         if (match.isPresent()) {
-            Student student = match.get();
-            student.addGrade(grade);
-            return Response.status(Response.Status.OK).build();
+            Optional<Course> match2 = courseList.stream()
+                    .filter(c -> c.getId() == grade.getCourse().getId())
+                    .findFirst();
+
+            if (match2.isPresent()) {
+                Student student = match.get();
+                grade.setCourse(match2.get());
+                student.addGrade(grade);
+                return Response.status(Response.Status.OK).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

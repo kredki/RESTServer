@@ -1,6 +1,13 @@
 package oceny;
 
+import org.glassfish.jersey.linking.InjectLink;
+import org.glassfish.jersey.linking.InjectLinks;
+
+import javax.ws.rs.core.Link;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -11,6 +18,18 @@ public class Grade {
     private Date date;
     private Course course;
     private static final AtomicLong counter = new AtomicLong(100);
+
+    /*@InjectLinks({
+            @InjectLink(value = "/students/{index}/grades/{id}", rel = "self"),
+            @InjectLink(value = "/grades", rel = "parent"),
+            @InjectLink(value = "/students/{index}", rel = "student")
+    })
+    @XmlElement(name = "link")
+    @XmlElementWrapper(name = "links")
+    @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
+    */
+
+    public void setCourse(Course course) { this.course = course; }
 
     private Grade(Grade.GradeBuilder builder){
         this.id = builder.id;
