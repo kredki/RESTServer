@@ -1,4 +1,4 @@
-package oceny;
+package oceny.exceptions;
 
 public class XmlError {
     private String type;

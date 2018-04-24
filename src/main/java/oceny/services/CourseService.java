@@ -1,6 +1,8 @@
 package oceny.services;
 
-import oceny.*;
+import oceny.exceptions.JsonError;
+import oceny.exceptions.NotFoundException;
+import oceny.exceptions.XmlError;
 import oceny.lists.CourseList;
 import oceny.lists.GradeList;
 import oceny.lists.StudentList;
@@ -8,10 +10,11 @@ import oceny.resources.Course;
 import oceny.resources.Grade;
 import oceny.resources.Student;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,7 +25,7 @@ public class CourseService {
     private final CopyOnWriteArrayList<Grade> gradeList = GradeList.getInstance();
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
 
-    @GET
+    /*@GET
     @Path("/courses")
     @Produces(MediaType.TEXT_PLAIN)
     public String getAllCourses() {
@@ -30,7 +33,7 @@ public class CourseService {
                 + cList.stream()
                 .map(c -> c.toString())
                 .collect(Collectors.joining("\n"));
-    }
+    }*/
 
     @GET
     @Path("/courses")
@@ -48,13 +51,20 @@ public class CourseService {
 
     @POST
     @Path("/courses")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addCourse(Course course){
         cList.add(course);
-        return Response.status(201).build();
+        URI uri = null;
+        try {
+            uri = new URI("http://localhost:8000/oceny/courses");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return Response.created(uri).build();
     }
 
-    @GET
+    /*@GET
     @Path("/courses/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getCourse(@PathParam("id") long id) {
@@ -67,7 +77,7 @@ public class CourseService {
         } else {
             return "Course not found";
         }
-    }
+    }*/
 
     @GET
     @Path("/courses/{id}")
@@ -85,9 +95,9 @@ public class CourseService {
             return Response.ok().entity(match.get()).type(mediaType).build();
         } else {
             if (mediaType.equals(MediaType.APPLICATION_XML)) {
-                throw new oceny.NotFoundException(new XmlError("Error", "Course " + id + " not found"));
+                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
             } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
-                throw new oceny.NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
             }
         }
         return null;
@@ -112,10 +122,19 @@ public class CourseService {
 
     @DELETE
     @Path("/courses/{id}")
-    public void deleteCourse(@PathParam("id") long id){
+    public void deleteCourse(@HeaderParam("Accept") String accepted, @PathParam("id") long id){
+        String mediaType = MediaType.APPLICATION_JSON;
+        if(accepted != null) {
+            mediaType = accepted;
+        }
+
         Predicate<Course> course = c -> c.getId() == id;
         if (!cList.removeIf(course)) {
-            throw new oceny.NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+            if (mediaType.equals(MediaType.APPLICATION_XML)) {
+                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
+            } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
+                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+            }
         }
     }
 }

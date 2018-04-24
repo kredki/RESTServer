@@ -2,8 +2,8 @@ package oceny.services;
 
 import oceny.lists.CourseList;
 import oceny.lists.GradeList;
-import oceny.JsonError;
-import oceny.NotFoundException;
+import oceny.exceptions.JsonError;
+import oceny.exceptions.NotFoundException;
 import oceny.lists.StudentList;
 import oceny.resources.Course;
 import oceny.resources.Grade;
@@ -60,7 +60,7 @@ public class GradeServices {
             //return match.get().getGrades().stream();
 
         } else {
-            throw new oceny.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
 
@@ -81,9 +81,9 @@ public class GradeServices {
 
         } else {
             if (mediaType.equals(MediaType.APPLICATION_XML)) {
-                throw new NotFoundException(new XmlError("Error", "Student " + index + " not found"));
+                throw new oceny.exceptions.NotFoundException(new XmlError("Error", "Student " + index + " not found"));
             } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
-                throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+                throw new oceny.exceptions.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
             }
         }
         return null;
@@ -183,7 +183,7 @@ public class GradeServices {
                 match.get().removeGrade(match2.get());
                 Predicate<Grade> grade = c -> c.getId() == id;
                 if (!cList.removeIf(grade)) {
-                    throw new oceny.NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
+                    throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
                 }
             } else {
                 throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));

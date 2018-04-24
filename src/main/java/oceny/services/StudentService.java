@@ -1,24 +1,27 @@
 package oceny.services;
 
-import oceny.JsonError;
-import oceny.NotFoundException;
+import oceny.exceptions.JsonError;
+import oceny.exceptions.NotFoundException;
 import oceny.lists.StudentList;
-import oceny.XmlError;
+import oceny.exceptions.XmlError;
 import oceny.resources.Student;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.function.Predicate;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/")
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StudentService {
     private final CopyOnWriteArrayList<Student> cList = StudentList.getInstance();
 
-    @GET
+    /*@GET
     @Path("/students")
     @Produces(MediaType.TEXT_PLAIN)
     public String getAllStudents() {
@@ -26,31 +29,38 @@ public class StudentService {
                 + cList.stream()
                 .map(c -> c.toString())
                 .collect(Collectors.joining("\n"));
-    }
+    }*/
 
     @GET
     @Path("/students")
-    @Produces(MediaType.APPLICATION_JSON)
+    //@Produces(MediaType.APPLICATION_JSON)
     public CopyOnWriteArrayList<Student> getAllStudentsJson() {
         return cList;
     }
 
-    @GET
+    /*@GET
     @Path("/students")
     @Produces(MediaType.APPLICATION_XML)
-    public CopyOnWriteArrayList<Student> getAllStudentsXml() {
-        return cList;
-    }
+    public Response getAllStudentsXml() {
+        return Response.ok().entity(cList).type(MediaType.APPLICATION_XML).build();
+    }*/
 
     @POST
     @Path("/students")
-    @Produces(MediaType.APPLICATION_JSON)
+    //@Produces(MediaType.APPLICATION_JSON)
+    //@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addStudent(Student student){
         cList.add(student);
-        return Response.status(201).build();
+        URI uri = null;
+        try {
+            uri = new URI("http://localhost:8000/oceny/students");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return Response.created(uri).build();
     }
 
-    @GET
+    /*@GET
     @Path("/students/{index}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getStudent(@PathParam("index") long index) {
@@ -63,11 +73,11 @@ public class StudentService {
         } else {
             return "Student not found";
         }
-    }
+    }*/
 
     @GET
     @Path("/students/{index}")
-    @Produces(MediaType.APPLICATION_JSON)
+    //@Produces(MediaType.APPLICATION_JSON)
     public Student getStudentJson(@PathParam("index") long index) {
         Optional<Student> match
                 = cList.stream()
@@ -76,11 +86,11 @@ public class StudentService {
         if (match.isPresent()) {
             return match.get();
         } else {
-            throw new oceny.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new oceny.exceptions.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
 
-    @GET
+    /*@GET
     @Path("/students/{index}")
     @Produces(MediaType.APPLICATION_XML)
     public Student getStudentXml(@PathParam("index") long index) {
@@ -91,13 +101,14 @@ public class StudentService {
         if (match.isPresent()) {
             return match.get();
         } else {
-            throw new oceny.NotFoundException(new XmlError("Error", "Student " + index + " not found"));
+            throw new NotFoundException(new XmlError("Error", "Student " + index + " not found"));
         }
-    }
+    }*/
 
     @PUT
     @Path("/students/{index}")
-    @Produces(MediaType.APPLICATION_JSON)
+    //@Produces(MediaType.APPLICATION_JSON)
+    //@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response updateStudent(Student student){
         int matchIdx = 0;
         Optional<Student> match = cList.stream()

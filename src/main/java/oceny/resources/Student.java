@@ -17,10 +17,15 @@ import java.util.concurrent.atomic.AtomicLong;
 @XmlRootElement
 public class Student {
 
+    @XmlElement
     private long index;
+    @XmlElement
     private String firstName;
+    @XmlElement
     private String lastName;
+    @XmlElement
     private Date birthday;
+    @XmlElement
     private List<Grade> grades;
     private static final AtomicLong counter = new AtomicLong(100);
 

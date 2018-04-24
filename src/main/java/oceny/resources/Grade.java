@@ -1,16 +1,27 @@
 package oceny.resources;
 
 import oceny.DateParser;
+import org.glassfish.jersey.linking.InjectLink;
+import org.glassfish.jersey.linking.InjectLinks;
 
+import javax.ws.rs.core.Link;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @XmlRootElement
 public class Grade {
+    @XmlElement
     private long id;
+    @XmlElement
     private float value;
+    @XmlElement
     private Date date;
+    @XmlElement
     private Course course;
     private static final AtomicLong counter = new AtomicLong(100);
 
