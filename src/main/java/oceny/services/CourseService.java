@@ -20,39 +20,22 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/")
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CourseService {
     private final CopyOnWriteArrayList<Course> cList = CourseList.getInstance();
     private final CopyOnWriteArrayList<Grade> gradeList = GradeList.getInstance();
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
 
-    /*@GET
-    @Path("/courses")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getAllCourses() {
-        return "---Courses List---\n"
-                + cList.stream()
-                .map(c -> c.toString())
-                .collect(Collectors.joining("\n"));
-    }*/
 
     @GET
     @Path("/courses")
-    @Produces(MediaType.APPLICATION_JSON)
     public CopyOnWriteArrayList<Course> getAllCoursesJson() {
-        return cList;
-    }
-
-    @GET
-    @Path("/courses")
-    @Produces(MediaType.APPLICATION_XML)
-    public CopyOnWriteArrayList<Course> getAllCoursesXml() {
         return cList;
     }
 
     @POST
     @Path("/courses")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addCourse(Course course){
         cList.add(course);
         URI uri = null;
@@ -64,26 +47,10 @@ public class CourseService {
         return Response.created(uri).build();
     }
 
-    /*@GET
-    @Path("/courses/{id}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getCourse(@PathParam("id") long id) {
-        Optional<Course> match
-                = cList.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst();
-        if (match.isPresent()) {
-            return "---Course---\n" + match.get().toString();
-        } else {
-            return "Course not found";
-        }
-    }*/
-
     @GET
     @Path("/courses/{id}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getCourseJson(@HeaderParam("Accept") String accepted, @PathParam("id") long id) {
-        String mediaType = MediaType.APPLICATION_JSON;
+    public Course getCourseJson(@HeaderParam("Accept") String accepted, @PathParam("id") long id) {
+        /*String mediaType = MediaType.APPLICATION_JSON;
         if(accepted != null) {
             mediaType = accepted;
         }
@@ -100,7 +67,17 @@ public class CourseService {
                 throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
             }
         }
-        return null;
+        return null;*/
+
+        Optional<Course> match
+                = cList.stream()
+                .filter(c -> c.getId() == id)
+                .findFirst();
+        if (match.isPresent()) {
+            return match.get();
+        } else {
+            throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+        }
     }
 
     @PUT
@@ -123,18 +100,10 @@ public class CourseService {
     @DELETE
     @Path("/courses/{id}")
     public void deleteCourse(@HeaderParam("Accept") String accepted, @PathParam("id") long id){
-        String mediaType = MediaType.APPLICATION_JSON;
-        if(accepted != null) {
-            mediaType = accepted;
-        }
 
         Predicate<Course> course = c -> c.getId() == id;
         if (!cList.removeIf(course)) {
-            if (mediaType.equals(MediaType.APPLICATION_XML)) {
-                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
-            } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
-                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
-            }
+            throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
         }
     }
 }

@@ -15,26 +15,23 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @XmlRootElement
 public class Grade {
-    @XmlElement
     private long id;
-    @XmlElement
     private float value;
-    @XmlElement
     private Date date;
-    @XmlElement
     private Course course;
+    private long studentOwnerIndex;
     private static final AtomicLong counter = new AtomicLong(100);
 
-    /*@InjectLinks({
-            @InjectLink(value = "/students/{index}/grades/{id}", rel = "self"),
-            @InjectLink(value = "/grades", rel = "parent"),
-            @InjectLink(value = "/students/{index}", rel = "student")
+    @InjectLinks({
+            @InjectLink(value = "students/{studentOwnerIndex}/grades", rel = "parent"),
+            @InjectLink(value = "students/{studentOwnerIndex}/grades/{id}", rel = "self")
     })
     @XmlElement(name = "link")
     @XmlElementWrapper(name = "links")
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     private List<Link> links;
-    */
+
+    public Grade() { }
 
     public Grade(float value, String dateString, Course course) {
         this.id = counter.getAndIncrement();
@@ -75,5 +72,13 @@ public class Grade {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public long getStudentOwnerIndex() {
+        return studentOwnerIndex;
+    }
+
+    public void setStudentOwnerIndex(long studentOwnerIndex) {
+        this.studentOwnerIndex = studentOwnerIndex;
     }
 }

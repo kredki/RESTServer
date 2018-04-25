@@ -17,15 +17,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @XmlRootElement
 public class Student {
 
-    @XmlElement
     private long index;
-    @XmlElement
     private String firstName;
-    @XmlElement
     private String lastName;
-    @XmlElement
     private Date birthday;
-    @XmlElement
     private List<Grade> grades;
     private static final AtomicLong counter = new AtomicLong(100);
 
@@ -49,6 +44,11 @@ public class Student {
         Date birthday = dateParser.getDate();
         this.birthday = birthday;
         this.grades = grades;
+        int i = 0;
+        for (Grade g: grades) {
+            g.setStudentOwnerIndex(this.index);
+            grades.set(i, g);
+        }
     }
 
     public Student(String firstName, String lastName, String birthdayString) {
@@ -86,6 +86,7 @@ public class Student {
     }
 
     public void addGrade(Grade grade) {
+        grade.setStudentOwnerIndex(this.index);
         grades.add(grade);
     }
 
@@ -94,6 +95,7 @@ public class Student {
         long id = grade.getId();
         for (Grade g : this.grades) {
             if(g.getId() == id) {
+                grade.setStudentOwnerIndex(this.index);
                 this.grades.set(i, grade);
                 return;
             }

@@ -15,11 +15,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @XmlRootElement
 public class Course {
 
-    @XmlElement
     private long id;
-    @XmlElement
     private String name;
-    @XmlElement
     private String lecturer;
     private static final AtomicLong counter = new AtomicLong(100);
 
