@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class CourseList {
     private static final CopyOnWriteArrayList<Course> cList = new CopyOnWriteArrayList<>();
 
-    static {
+    public static void initList(){
 
         cList.add(new Course("Przedmiot1", "Jan Nowak"));
         cList.add(new Course("Przedmiot2", "Andrzej Kowalski"));

@@ -10,7 +10,7 @@ public class GradeList {
     private static final CopyOnWriteArrayList<Grade> cList = new CopyOnWriteArrayList<>();
     private static final CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
 
-    static {
+    public static void initList(){
         cList.add(new Grade(3.0f, "2018-04-13", courseList.get(0)));
         cList.add(new Grade(3.0f, "2018-04-13", courseList.get(1)));
         cList.add(new Grade(3.0f, "2018-04-13", courseList.get(2)));

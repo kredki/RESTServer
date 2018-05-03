@@ -3,15 +3,11 @@ package oceny;
 import java.io.IOException;
 import java.net.URI;
 
-import com.mongodb.MongoClient;
+import oceny.db.MongoHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-
-import javax.ws.rs.core.Application;
 
 public class RESTServer {
 
@@ -30,17 +26,8 @@ public class RESTServer {
     }
 
     public static void main(String[] args) throws IOException {
-        /*final Morphia morphia = new Morphia();
 
-        // tell Morphia where to find your classes
-        // can be called multiple times with different packages or classes
-        morphia.mapPackage("oceny");
-
-        // create the Datastore connecting to the default port on the local host
-        final Datastore datastore = morphia.createDatastore(new MongoClient(), "eproto");
-        datastore.ensureIndexes();
-        */
-
+        MongoHandler.getInstance();
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));

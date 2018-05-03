@@ -1,22 +1,38 @@
 package oceny.resources;
 
+import oceny.ObjectIdJaxbAdapter;
+import oceny.db.MongoHandler;
+import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Transient;
+import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 
 import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Entity("courses")
 @XmlRootElement
+@XmlType(propOrder = {"id", "name", "lecturer", "links"})
 public class Course {
-
+    @Id
+    @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
+    private ObjectId objectId;
+    @Transient
     private long id;
+    /*@Id
+    @XmlElement
+    private long id;*/
+    @XmlElement
     private String name;
+    @XmlElement
     private String lecturer;
     private static final AtomicLong counter = new AtomicLong(100);
 
@@ -33,11 +49,26 @@ public class Course {
     public Course() { }
 
     public Course(String name, String lecturer) {
-        this.id = counter.getAndIncrement();
+        //get id from db and increment it
+        Datastore datastore = MongoHandler.getInstance().getDatastore();
+        final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("courseLastId");
+        Indexes indexes = datastore.findAndModify(findQuery, operation );
+        this.id = indexes.getCourseLastId();
+
         this.name = name;
         this.lecturer = lecturer;
     }
 
+    public ObjectId getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
+    }
+
+    @XmlAttribute
     public long getId() {
         return id;
     }
@@ -46,6 +77,7 @@ public class Course {
         this.id = id;
     }
 
+    @XmlElement
     public String getName() {
         return name;
     }
@@ -54,6 +86,7 @@ public class Course {
         this.name = name;
     }
 
+    @XmlElement
     public String getLecturer() {
         return lecturer;
     }

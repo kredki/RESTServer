@@ -16,7 +16,7 @@ public class StudentList {
     private static List<Grade> gradesList2 = new ArrayList<Grade>();
     private static List<Grade> gradesList3 = new ArrayList<Grade>();
 
-    static {
+    public static void initList(){
 
         gradesList1.add(gradeList.get(0));
         gradesList1.add(gradeList.get(1));
