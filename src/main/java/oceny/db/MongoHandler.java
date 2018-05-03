@@ -19,17 +19,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MongoHandler {
     private static MongoHandler instance = null;
-    private final Morphia morphia;
-    private final Datastore datastore;
-    private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
-    private final CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
-    private final CopyOnWriteArrayList<Grade> gradetList = GradeList.getInstance();
+    private static Morphia morphia;
+    private static Datastore datastore = null;
 
     public static MongoHandler getInstance() {
         if (instance != null) {
             return instance;
         } else {
             instance = new MongoHandler();
+            initialize();
             return instance;
         }
     }
@@ -48,7 +46,7 @@ public class MongoHandler {
      * @param collectionName
      * @return false if collection doesn't exist or is empty
      */
-    public boolean isCollectionExists(DB db, String collectionName)
+    public static boolean isCollectionExists(DB db, String collectionName)
     {
 
         DBCollection table = db.getCollection(collectionName);
@@ -67,42 +65,50 @@ public class MongoHandler {
         // create the Datastore connecting to the port 8004 on the local host
         this.datastore = morphia.createDatastore(new MongoClient("localhost" , 8004), "gradesDB");
         this.datastore.ensureIndexes();
-        initialize();
+        //initialize();
 
     }
 
-    private void initialize() {
+    private static void initialize() {
+        boolean indexesExists = isCollectionExists(datastore.getDB(), "indexes");
+        Indexes indexesInstance = Indexes.getInstance();
+        if(!indexesExists) {
+            /*
+            //Query<Indexes> query = datastore.createQuery(Indexes.class);
+            //List<Indexes> indexes = query.asList();
+            final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
+            Indexes indexes = findQuery.get();
+            Indexes indexesTemp = indexes;
+            indexesInstance.setIndexes(indexesTemp.getStudentLastId(),
+                    indexesTemp.getCourseLastId(), indexesTemp.getGradeLastId());
+        } else {
+        */
+            indexesInstance.setAllToOne();
+            datastore.save(indexesInstance);
+        }
+
         boolean coursesExists = isCollectionExists(datastore.getDB(), "courses");
         System.out.println("coursesExists " + coursesExists);
         if(!coursesExists) {
+            CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
             CourseList.initList();
-            this.datastore.save(courseList);
+            datastore.save(courseList);
         }
 
-        Query<Indexes> query = datastore.createQuery(Indexes.class);
-        List<Indexes> indexes = query.asList();
-
-        Indexes indexesInstance = Indexes.getInstance();
-        if(indexes.isEmpty()) {
-            indexesInstance.setAllToOne();
-            this.datastore.save(indexesInstance);
-        } else {
-            Indexes indexesTemp = indexes.get(0);
-            indexesInstance.setIndexes(indexesTemp.getStudentLastId(),
-                    indexesTemp.getCourseLastId(), indexesTemp.getGradeLastId());
-        }
         boolean gradesExists = isCollectionExists(datastore.getDB(), "grades");
         System.out.println("gradesExists" + gradesExists);
         if(!gradesExists) {
+            CopyOnWriteArrayList<Grade> gradetList = GradeList.getInstance();
             GradeList.initList();
-            this.datastore.save(gradetList);
+            datastore.save(gradetList);
         }
 
         boolean studentsExists = isCollectionExists(datastore.getDB(), "students");
         System.out.println("studentsExists " + studentsExists);
         if(!studentsExists) {
+            CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
             StudentList.initList();
-            this.datastore.save(studentList);
+            datastore.save(studentList);
         }
     }
 }
