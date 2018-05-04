@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StudentService {
-    private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
     private final StudentDAO studentDAO = StudentDAO.getInstance();
 
     @GET

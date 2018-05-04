@@ -30,7 +30,7 @@ public class CourseService {
 
     @GET
     @Path("/courses")
-    public CopyOnWriteArrayList<Course> getAllCoursesJson() {
+    public CopyOnWriteArrayList<Course> getAllCourses() {
         return cList;
     }
 
