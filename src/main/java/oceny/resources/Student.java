@@ -2,6 +2,7 @@ package oceny.resources;
 
 import oceny.DateParser;
 import oceny.db.MongoHandler;
+import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 import org.mongodb.morphia.Datastore;
@@ -26,6 +27,8 @@ public class Student {
 
     @Id
     @XmlElement
+    ObjectId objectId;
+    @XmlElement
     private long index;
     @XmlElement
     private String firstName;
@@ -48,16 +51,10 @@ public class Student {
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     private List<Link> links;
 
-    public Student() { }
+    public Student() { this.index = getIndexFromDB(); }
 
     public Student(String firstName, String lastName, String birthdayString, List<Grade> grades) {
-        //get index from db and increment it
-        Datastore datastore = MongoHandler.getInstance().getDatastore();
-        final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
-        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("studentLastId");
-        Indexes indexes = datastore.findAndModify(findQuery, operation );
-        this.index = indexes.getStudentLastId();
-
+        this.index = getIndexFromDB();
         this.firstName = firstName;
         this.lastName = lastName;
         DateParser dateParser = new DateParser(birthdayString);
@@ -72,7 +69,7 @@ public class Student {
     }
 
     public Student(String firstName, String lastName, String birthdayString) {
-        this.index = counter.getAndIncrement();
+        this.index = getIndexFromDB();
         this.firstName = firstName;
         this.lastName = lastName;
         DateParser dateParser = new DateParser(birthdayString);
@@ -81,34 +78,26 @@ public class Student {
         this.grades = new ArrayList<>();
     }
 
+    public ObjectId getObjectId() { return objectId; }
+
+    public void setObjectId(ObjectId objectId) { this.objectId = objectId; }
+
     @XmlAttribute
-    public long getIndex() {
-        return index;
-    }
+    public long getIndex() { return index; }
 
-    public void setIndex(long index) {
-        this.index = index;
-    }
+    public void setIndex(long index) { this.index = index; }
 
     @XmlElement
-    public String getFirstName() {
-        return firstName;
-    }
+    public String getFirstName() { return firstName; }
 
     @XmlElement
-    public String getLastName() {
-        return lastName;
-    }
+    public String getLastName() { return lastName; }
 
     @XmlElement
-    public Date getBirthday() {
-        return birthday;
-    }
+    public Date getBirthday() { return birthday; }
 
     @XmlElement
-    public List<Grade> getGrades() {
-        return grades;
-    }
+    public List<Grade> getGrades() { return grades; }
 
     public void addGrade(Grade grade) {
         grade.setStudentOwnerIndex(this.index);
@@ -138,5 +127,25 @@ public class Student {
             }
             i++;
         }
+    }
+
+    /**
+     * get index from DB and increment it
+     * @return index
+     */
+    private long getIndexFromDB() {
+        //get index from db and increment it
+        Datastore datastore = MongoHandler.getInstance().getDatastore();
+        final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("studentLastId");
+        Indexes indexes = datastore.findAndModify(findQuery, operation );
+
+        //update index in db
+        long studentIndex = indexes.getStudentLastId();
+        /*final Query<Student> updateQuery = datastore.createQuery(Student.class).field("objectId").equal(this.objectId);
+        final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class).set("index", studentIndex);
+        datastore.update(updateQuery, updateOperation);
+*/
+        return studentIndex;
     }
 }

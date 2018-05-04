@@ -48,16 +48,10 @@ public class Grade {
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     private List<Link> links;
 
-    public Grade() { }
+    public Grade() { this.id = getIdFromDB(); }
 
     public Grade(float value, String dateString, Course course) {
-        //get id from db and increment it
-        Datastore datastore = MongoHandler.getInstance().getDatastore();
-        final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
-        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("gradeLastId");
-        Indexes indexes = datastore.findAndModify(findQuery, operation );
-        this.id = indexes.getGradeLastId();
-
+        this.id = getIdFromDB();
         this.value = value;
         DateParser dateParser = new DateParser(dateString);
         Date date = dateParser.getDate();
@@ -108,5 +102,13 @@ public class Grade {
 
     public void setStudentOwnerIndex(long studentOwnerIndex) {
         this.studentOwnerIndex = studentOwnerIndex;
+    }
+
+    private long getIdFromDB() {
+        Datastore datastore = MongoHandler.getInstance().getDatastore();
+        final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("gradeLastId");
+        Indexes indexes = datastore.findAndModify(findQuery, operation );
+        return indexes.getGradeLastId();
     }
 }

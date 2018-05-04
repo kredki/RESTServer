@@ -1,5 +1,6 @@
 package oceny.services;
 
+import oceny.dao.StudentDAO;
 import oceny.exceptions.JsonError;
 import oceny.exceptions.NotFoundException;
 import oceny.lists.StudentList;
@@ -7,6 +8,7 @@ import oceny.resources.Student;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,18 +21,16 @@ import javax.ws.rs.core.Response;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StudentService {
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
-
+    private final StudentDAO studentDAO = StudentDAO.getInstance();
 
     @GET
     @Path("/students")
-    public CopyOnWriteArrayList<Student> getAllStudentsJson() {
-        return studentList;
-    }
+    public List<Student> getAllStudentsJson() { return studentDAO.getStudentsList(); }
 
     @POST
     @Path("/students")
     public Response addStudent(Student student){
-        studentList.add(student);
+        studentDAO.addStudent(student);
         URI uri = null;
         try {
             uri = new URI("http://localhost:8000/oceny/students");
