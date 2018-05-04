@@ -46,7 +46,8 @@ public class CourseDAO {
     public boolean updateCourse(Course course) {
         Course courseInDB = getCourse(course.getId());
         if(courseInDB == null) {
-            return false;
+            datastore.save(course);
+            return true;
         } else {
             final Query<Course> updateQuery = datastore.createQuery(Course.class).field("objectId").equal(course.getObjectId());
             final UpdateOperations<Course> updateOperation = datastore.createUpdateOperations(Course.class)

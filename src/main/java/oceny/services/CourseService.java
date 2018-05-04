@@ -57,7 +57,7 @@ public class CourseService {
             throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
         }
     }
-//
+
     @PUT
     @Path("/courses/{id}")
     public Response updateCourse(@PathParam("id") long id, Course course){
@@ -68,7 +68,7 @@ public class CourseService {
         if(courseDAO.updateCourse(course)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            throw new NotFoundException(new JsonError("Error", "Course " + course.getId() + " not found"));
+            throw new NotFoundException(new JsonError("Error", "Course " + course.getId() + " not put"));
         }
     }
 

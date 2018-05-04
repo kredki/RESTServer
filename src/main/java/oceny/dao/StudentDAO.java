@@ -42,14 +42,15 @@ public class StudentDAO {
     }
 
     /**
-     * update student
+     * update student, write new one if not found in DB
      * @param student updated student to write in DB
-     * @return true if succesfull, false if student not found
+     * @return true if succesfull
      */
     public boolean updateStudent(Student student) {
         Student studentInDB = getStudent(student.getIndex());
         if(studentInDB == null) {
-            return false;
+            datastore.save(student);
+            return true;
         } else {
             final Query<Student> updateQuery = datastore.createQuery(Student.class).field("objectId").equal(student.getObjectId());
             final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)

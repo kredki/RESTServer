@@ -59,7 +59,7 @@ public class StudentService {
         if(studentDAO.updateStudent(student)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            throw new NotFoundException(new JsonError("Error", "Student " + student.getIndex() + " not found"));
+            throw new NotFoundException(new JsonError("Error", "Student " + student.getIndex() + " not put"));
         }
     }
 
