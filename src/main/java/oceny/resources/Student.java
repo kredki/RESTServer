@@ -39,10 +39,9 @@ public class Student {
     private String lastName;
     @XmlElement
     private Date birthday;
-    @Embedded
+    @Reference
     @XmlElement
     private List<Grade> grades;
-    private static final AtomicLong counter = new AtomicLong(100);
 
     @InjectLinks({
             @InjectLink(value = "/students/{index}", rel = "self"),

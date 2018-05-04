@@ -29,8 +29,7 @@ public class StudentDAO {
 
     public List<Student> getStudentsList() {
         Query<Student> query = datastore.createQuery(Student.class);
-        List<Student> studentslist = query.asList();
-        return studentslist;
+        return query.asList();
     }
 
     public Student getStudent(Long index) {

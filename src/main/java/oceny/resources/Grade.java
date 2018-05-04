@@ -33,11 +33,10 @@ public class Grade {
     @XmlElement
     private Date date;
     @XmlElement
-    @Embedded
+    @Reference
     private Course course;
     @XmlElement
     private long studentOwnerIndex;
-    private static final AtomicLong counter = new AtomicLong(100);
 
     @InjectLinks({
             @InjectLink(value = "students/{studentOwnerIndex}/grades", rel = "parent"),

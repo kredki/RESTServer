@@ -46,7 +46,7 @@ public class StudentService {
         if (student != null) {
             return student;
         } else {
-            throw new oceny.exceptions.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
 
@@ -67,7 +67,6 @@ public class StudentService {
     @Path("/students/{index}")
     public Response deleteStudent(@PathParam("index") long index){
         if (studentDAO.deleteStudent(index)) {
-            String result = "Student " + index + " deleted!";
             return Response.status(202).build();
         } else {
             throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));

@@ -25,21 +25,16 @@ public class Course {
     @Id
     @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
     private ObjectId objectId;
-    @Transient
-    private long id;
-    /*@Id
     @XmlElement
-    private long id;*/
+    private long id;
     @XmlElement
     private String name;
     @XmlElement
     private String lecturer;
-    private static final AtomicLong counter = new AtomicLong(100);
 
     @InjectLinks({
             @InjectLink(value = "/courses/{id}", rel = "self"),
             @InjectLink(value = "/courses", rel = "parent"),
-//            @InjectLink(value = "/students/{index}", rel = "student")
     })
     @XmlElement(name = "link")
     @XmlElementWrapper(name = "links")

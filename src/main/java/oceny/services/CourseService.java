@@ -1,8 +1,8 @@
 package oceny.services;
 
+import oceny.dao.CourseDAO;
 import oceny.exceptions.JsonError;
 import oceny.exceptions.NotFoundException;
-import oceny.exceptions.XmlError;
 import oceny.lists.CourseList;
 import oceny.lists.GradeList;
 import oceny.lists.StudentList;
@@ -12,6 +12,7 @@ import oceny.resources.Student;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
@@ -24,20 +25,19 @@ import javax.ws.rs.core.Response;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CourseService {
     private final CopyOnWriteArrayList<Course> cList = CourseList.getInstance();
-    private final CopyOnWriteArrayList<Grade> gradeList = GradeList.getInstance();
-    private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
+    private final CourseDAO courseDAO = CourseDAO.getInstance();
 
 
     @GET
     @Path("/courses")
-    public CopyOnWriteArrayList<Course> getAllCourses() {
-        return cList;
+    public List<Course> getAllCourses() {
+        return courseDAO.getCoursesList();
     }
 
     @POST
     @Path("/courses")
     public Response addCourse(Course course){
-        cList.add(course);
+        courseDAO.addCourse(course);
         URI uri = null;
         try {
             uri = new URI("http://localhost:8000/oceny/courses");
@@ -49,32 +49,10 @@ public class CourseService {
 
     @GET
     @Path("/courses/{id}")
-    public Course getCourseJson(@HeaderParam("Accept") String accepted, @PathParam("id") long id) {
-        /*String mediaType = MediaType.APPLICATION_JSON;
-        if(accepted != null) {
-            mediaType = accepted;
-        }
-        Optional<Course> match
-                = cList.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst();
-        if (match.isPresent()) {
-            return Response.ok().entity(match.get()).type(mediaType).build();
-        } else {
-            if (mediaType.equals(MediaType.APPLICATION_XML)) {
-                throw new NotFoundException(new XmlError("Error", "Course " + id + " not found"));
-            } else if(mediaType.equals(MediaType.APPLICATION_JSON)) {
-                throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
-            }
-        }
-        return null;*/
-
-        Optional<Course> match
-                = cList.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst();
-        if (match.isPresent()) {
-            return match.get();
+    public Course getCourseJson(@PathParam("id") long id) {
+        Course course = courseDAO.getCourse(id);
+        if (course != null) {
+            return course;
         } else {
             throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
         }
@@ -82,28 +60,25 @@ public class CourseService {
 
     @PUT
     @Path("/courses/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCourse(Course course){
-        int matchIdx = 0;
-        Optional<Course> match = cList.stream()
-                .filter(c -> c.getId() == course.getId())
-                .findFirst();
-        if (match.isPresent()) {
-            matchIdx = cList.indexOf(match.get());
-            cList.set(matchIdx, course);
+    public Response updateCourse(@PathParam("id") long id, Course course){
+        if(id != course.getId()) {
+            throw new NotFoundException(new JsonError("Error", "Index in url and in request body are different"));
+        }
+
+        if(courseDAO.updateCourse(course)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException(new JsonError("Error", "Course " + course.getId() + " not found"));
         }
     }
 
     @DELETE
     @Path("/courses/{id}")
-    public void deleteCourse(@HeaderParam("Accept") String accepted, @PathParam("id") long id){
-
-        Predicate<Course> course = c -> c.getId() == id;
-        if (!cList.removeIf(course)) {
-            throw new NotFoundException(new JsonError("Error", "Course " + id + " not found"));
+    public Response deleteCourse(@PathParam("id") long id){
+        if (courseDAO.deleteCourse(id)) {
+            return Response.status(202).build();
+        } else {
+            throw new NotFoundException(new JsonError("Error", "Course " + id + " not deleted. Course have aaigened grades or not exists."));
         }
     }
 }
