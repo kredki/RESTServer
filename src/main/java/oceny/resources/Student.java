@@ -1,6 +1,7 @@
 package oceny.resources;
 
 import oceny.DateParser;
+import oceny.ObjectIdJaxbAdapter;
 import oceny.db.MongoHandler;
 import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.InjectLink;
@@ -27,8 +28,10 @@ public class Student {
 
     @Id
     @XmlElement
+    @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
     ObjectId objectId;
     @XmlElement
+    @Indexed(name = "index", unique = true)
     private long index;
     @XmlElement
     private String firstName;

@@ -12,9 +12,7 @@ import oceny.resources.Indexes;
 import oceny.resources.Student;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.query.Query;
 
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MongoHandler {
@@ -50,7 +48,7 @@ public class MongoHandler {
     {
 
         DBCollection table = db.getCollection(collectionName);
-        return (table.count()>0)?true:false;
+        return table.count()>0;
     }
 
     private MongoHandler() {
@@ -83,7 +81,7 @@ public class MongoHandler {
                     indexesTemp.getCourseLastId(), indexesTemp.getGradeLastId());
         } else {
         */
-            indexesInstance.setAllToOne();
+            indexesInstance.setAllToZero();
             datastore.save(indexesInstance);
         }
 

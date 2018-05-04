@@ -32,10 +32,10 @@ public class Indexes {
         }
     }
 
-    public void setAllToOne() {
-        this.studentLastId = 1;
-        this.courseLastId = 1;
-        this.gradeLastId = 1;
+    public void setAllToZero() {
+        this.studentLastId = 0;
+        this.courseLastId = 0;
+        this.gradeLastId = 0;
     }
 
     public void setIndexes(long studentLastId, long courseLastId, long gradeLastId) {

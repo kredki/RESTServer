@@ -42,13 +42,10 @@ public class StudentService {
 
     @GET
     @Path("/students/{index}")
-    public Student getStudentJson(@PathParam("index") long index) {
-        Optional<Student> match
-                = studentList.stream()
-                .filter(c -> c.getIndex() == index)
-                .findFirst();
-        if (match.isPresent()) {
-            return match.get();
+    public Student getStudent(@PathParam("index") long index) {
+        Student student = studentDAO.getStudent(index);
+        if (student != null) {
+            return student;
         } else {
             throw new oceny.exceptions.NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
@@ -56,25 +53,24 @@ public class StudentService {
 
     @PUT
     @Path("/students/{index}")
-    public Response updateStudent(Student student){
-        int matchIdx = 0;
-        Optional<Student> match = studentList.stream()
-                .filter(c -> c.getIndex() == student.getIndex())
-                .findFirst();
-        if (match.isPresent()) {
-            matchIdx = studentList.indexOf(match.get());
-            studentList.set(matchIdx, student);
+    public Response updateStudent(@PathParam("index") long index, Student student){
+        if(index != student.getIndex()) {
+            throw new NotFoundException(new JsonError("Error", "Index in url and in request body are different"));
+        }
+        if(studentDAO.updateStudent(student)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException(new JsonError("Error", "Student " + student.getIndex() + " not found"));
         }
     }
 
     @DELETE
     @Path("/students/{index}")
-    public void deleteStudent(@PathParam("index") long index){
-        Predicate<Student> student = c -> c.getIndex() == index;
-        if (!studentList.removeIf(student)) {
+    public Response deleteStudent(@PathParam("index") long index){
+        if (studentDAO.deleteStudent(index)) {
+            String result = "Student " + index + " deleted!";
+            return Response.status(202).build();
+        } else {
             throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         }
     }
