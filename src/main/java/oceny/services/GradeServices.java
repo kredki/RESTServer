@@ -11,9 +11,10 @@ import oceny.resources.Grade;
 import oceny.resources.Student;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -41,26 +42,16 @@ public class GradeServices {
 
     @POST
     public Response addGrade(@PathParam("index") long index, Grade grade){
-        Optional<Student> match = studentList.stream()
-                .filter(c -> c.getIndex() == index)
-                .findFirst();
-
-        if (match.isPresent()) {
-            Optional<Course> match2 = courseList.stream()
-                    .filter(c -> c.getId() == grade.getCourse().getId())
-                    .findFirst();
-
-            if (match2.isPresent()) {
-                Student student = match.get();
-                grade.setCourse(match2.get());
-                student.addGrade(grade);
-                gradeList.add(grade);
-                return Response.status(Response.Status.OK).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
+        if (gradeDAO.addGrade(index, grade)) {
+            URI uri = null;
+            try {
+                uri = new URI("http://localhost:8000/oceny/students/" + index +"/grades");
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
             }
+            return Response.created(uri).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException(new JsonError("Error", "Student " + index + " or course not found"));
         }
     }
 

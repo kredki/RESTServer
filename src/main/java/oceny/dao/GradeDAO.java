@@ -4,8 +4,10 @@ import oceny.db.MongoHandler;
 import oceny.resources.Course;
 import oceny.resources.Grade;
 import oceny.resources.Student;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 
 import java.util.List;
 
@@ -64,5 +66,35 @@ public class GradeDAO {
             }
             return grade;
         }
+    }
+
+    /**
+     * add grade to student
+     * @param index index of student
+     * @param grade grade to add
+     * @return true if succesful, false if not found student or course
+     */
+    public boolean addGrade(long index, Grade grade) {
+        //check if student exists
+        final Query<Student> query = datastore.createQuery(Student.class).field("index").equal(index);
+        Student student = query.get();
+        if(student == null) {
+            return false;
+        }
+
+        //check if course exists
+        final Query<Course> courseQuery = datastore.createQuery(Course.class).field("objectId").equal(grade.getCourse().getObjectId());
+        Course course = courseQuery.get();
+        if (course == null) {
+            return false;
+        }
+
+        datastore.save(grade);
+        //grade = datastore.createQuery(Grade.class).field("id").equal(grade.getId()).get();
+        student.addGrade(grade);
+        final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)
+                .set("grades", student.getGrades());
+        datastore.update(query, updateOperation);
+        return true;
     }
 }

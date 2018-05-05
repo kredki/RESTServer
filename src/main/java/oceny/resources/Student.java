@@ -53,7 +53,10 @@ public class Student {
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     private List<Link> links;
 
-    public Student() { this.index = getIndexFromDB(); }
+    public Student() {
+        this.index = getIndexFromDB();
+        this.grades = new ArrayList<>();
+    }
 
     public Student(String firstName, String lastName, String birthdayString, List<Grade> grades) {
         this.index = getIndexFromDB();
@@ -65,8 +68,8 @@ public class Student {
         this.grades = grades;
         int i = 0;
         for (Grade g: grades) {
-            g.setStudentOwnerIndex(this.index);
             grades.set(i, g);
+            i++;
         }
     }
 
@@ -103,7 +106,7 @@ public class Student {
 
     public void addGrade(Grade grade) {
         grade.setStudentOwnerIndex(this.index);
-        grades.add(grade);
+        this.grades.add(grade);
     }
 
     public void setGradeOnList(Grade grade) {

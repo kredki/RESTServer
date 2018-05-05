@@ -1,7 +1,9 @@
 package oceny.resources;
 
 import oceny.DateParser;
+import oceny.ObjectIdJaxbAdapter;
 import oceny.db.MongoHandler;
+import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 import org.mongodb.morphia.Datastore;
@@ -26,6 +28,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @XmlRootElement
 public class Grade {
     @Id
+    @XmlElement
+    @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
+    ObjectId objectId;
     @XmlElement
     private long id;
     @XmlElement
