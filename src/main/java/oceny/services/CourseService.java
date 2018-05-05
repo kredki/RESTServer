@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CourseService {
-    private final CopyOnWriteArrayList<Course> cList = CourseList.getInstance();
     private final CourseDAO courseDAO = CourseDAO.getInstance();
 
 

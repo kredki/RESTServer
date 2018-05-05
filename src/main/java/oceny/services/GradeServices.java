@@ -1,5 +1,6 @@
 package oceny.services;
 
+import oceny.dao.GradeDAO;
 import oceny.lists.CourseList;
 import oceny.lists.GradeList;
 import oceny.exceptions.JsonError;
@@ -22,26 +23,19 @@ import java.util.function.Predicate;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class GradeServices {
+    private final GradeDAO gradeDAO = GradeDAO.getInstance().getInstance();
     private final CopyOnWriteArrayList<Grade> gradeList = GradeList.getInstance();
     private final CopyOnWriteArrayList<Student> studentList = StudentList.getInstance();
     private final CopyOnWriteArrayList<Course> courseList = CourseList.getInstance();
 
 
     @GET
-    public Response getStudentGradesJson(@PathParam("index") long index) {
-        Optional<Student> match
-                = studentList.stream()
-                .filter(c -> c.getIndex() == index)
-                .findFirst();
-        if (match.isPresent()) {
-            List<Grade> grades = match.get().getGrades();
-            GenericEntity<List<Grade>> genericEntity = new GenericEntity<List<Grade>>(grades) {
-            };
-            return Response.ok(genericEntity).build();
-            //return match.get().getGrades().stream();
-
-        } else {
+    public List<Grade> getStudentGrades(@PathParam("index") long index) {
+        List<Grade> grades = gradeDAO.getStudentGradesList(index);
+        if(grades == null) {
             throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+        } else {
+            return grades;
         }
     }
 
@@ -73,20 +67,11 @@ public class GradeServices {
     @GET
     @Path("/{id}")
     public Grade getStudentGrade(@PathParam("index") long index, @PathParam("id") long id) {
-        Optional<Grade> matchGrade = gradeList.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst();
-        Optional<Student> matchStudent = studentList.stream()
-                .filter(c -> c.getIndex() == index)
-                .findFirst();
-        if(matchStudent.isPresent()) {
-            if (matchGrade.isPresent()) {
-                return matchGrade.get();
-            } else {
-                throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
-            }
+        Grade grade = gradeDAO.getGrade(index, id);
+        if(grade == null) {
+            throw new NotFoundException(new JsonError("Error", "Student " + index + " or grade " + id + " of this student not found"));
         } else {
-            throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
+            return grade;
         }
     }
 
