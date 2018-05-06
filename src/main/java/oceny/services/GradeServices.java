@@ -68,54 +68,25 @@ public class GradeServices {
 
     @PUT
     @Path("/{id}")
-    public Response updateGrade(@PathParam("index") long index, Grade grade){
-        int matchIdx = 0;
-        int matchIdx2 = 0;
-        Optional<Grade> match = gradeList.stream()
-                .filter(c -> c.getId() == grade.getId())
-                .findFirst();
-        if (match.isPresent()) {
-            matchIdx = gradeList.indexOf(match.get());
-            Optional<Student> match2 = studentList.stream()
-                    .filter(c -> c.getIndex() == index)
-                    .findFirst();
-            if(match2.isPresent()) {
-                matchIdx2 = studentList.indexOf(match2.get());
-                gradeList.set(matchIdx, grade);
-                Student student =match2.get();
-                student.setGradeOnList(grade);
-                studentList.set(matchIdx2, student);
-                return Response.status(Response.Status.OK).build();
-            } else {
-                Response.status(Response.Status.NOT_FOUND).build();
-            }
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+    public Response updateGrade(@PathParam("index") long index, @PathParam("id") long id, Grade grade){
+        if(id != grade.getId()) {
+            throw new NotFoundException(new JsonError("Error", "Id in url and in request body are different"));
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+
+        if(gradeDAO.updateGrade(index, grade)) {
+            return Response.status(Response.Status.OK).build();
+        } else {
+            throw new NotFoundException(new JsonError("Error", "Grade " + id + " not put"));
+        }
     }
 
     @DELETE
     @Path("/{id}")
-    public void deleteGrade(@PathParam("index") long index, @PathParam("id") long id){
-        Optional<Student> match = studentList.stream()
-                .filter(c -> c.getIndex() == index)
-                .findFirst();
-        if(match.isPresent()) {
-            Optional<Grade> match2 = gradeList.stream()
-                    .filter(c -> c.getId() == id)
-                    .findFirst();
-            if(match2.isPresent()) {
-                match.get().removeGrade(match2.get());
-                Predicate<Grade> grade = c -> c.getId() == id;
-                if (!gradeList.removeIf(grade)) {
-                    throw new NotFoundException(new JsonError("Error", "Grade " + id + " not found"));
-                }
-            } else {
-                throw new NotFoundException(new JsonError("Error", "Student " + id + " not found"));
-            }
+    public Response deleteGrade(@PathParam("index") long index, @PathParam("id") long id){
+        if (gradeDAO.deleteGrade(index, id)) {
+            return Response.status(202).build();
         } else {
-            Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException(new JsonError("Error", "Grade " + id +" or student " + index + " not found"));
         }
     }
 }

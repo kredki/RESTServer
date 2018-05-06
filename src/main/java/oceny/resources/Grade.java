@@ -7,7 +7,6 @@ import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
@@ -15,17 +14,15 @@ import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
 import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity("grades")
 @XmlRootElement
+@XmlType(propOrder = {"id", "value", "date", "course", "objectId", "studentOwnerIndex", "links"})
 public class Grade {
     @Id
     @XmlElement
@@ -63,47 +60,52 @@ public class Grade {
         this.course = course;
     }
 
-    @XmlAttribute
+    @Transient
     public long getId() {
         return id;
     }
 
+    @Transient
     public void setId(long id) {
         this.id = id;
     }
 
-    @XmlElement
+    @Transient
     public float getValue() {
         return value;
     }
 
+    @Transient
     public void setValue(float value) {
         this.value = value;
     }
 
-    @XmlElement
+    @Transient
     public Date getDate() {
         return date;
     }
 
+    @Transient
     public void setDate(Date date) {
         this.date = date;
     }
 
-    @XmlElement
+    @Transient
     public Course getCourse() {
         return course;
     }
 
+    @Transient
     public void setCourse(Course course) {
         this.course = course;
     }
 
-    @XmlElement
+    @Transient
     public long getStudentOwnerIndex() {
         return studentOwnerIndex;
     }
 
+    @Transient
     public void setStudentOwnerIndex(long studentOwnerIndex) {
         this.studentOwnerIndex = studentOwnerIndex;
     }

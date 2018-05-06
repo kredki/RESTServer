@@ -59,6 +59,11 @@ public class CourseDAO {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return tru if successful, false if course not exists or have assigned grades
+     */
     public boolean deleteCourse(long id) {
         List<Student> studentList = StudentDAO.getInstance().getStudentsList();
         for(Student student : studentList) {

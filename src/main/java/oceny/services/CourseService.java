@@ -77,7 +77,7 @@ public class CourseService {
         if (courseDAO.deleteCourse(id)) {
             return Response.status(202).build();
         } else {
-            throw new NotFoundException(new JsonError("Error", "Course " + id + " not deleted. Course have aaigened grades or not exists."));
+            throw new NotFoundException(new JsonError("Error", "Course " + id + " not deleted. Course have assigened grades or not exists."));
         }
     }
 }

@@ -8,19 +8,18 @@ import org.glassfish.jersey.linking.InjectLinks;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Transient;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
 import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.beans.Transient;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity("courses")
 @XmlRootElement
-@XmlType(propOrder = {"id", "name", "lecturer", "links"})
+@XmlType(propOrder = {"id", "name", "lecturer", "objectId", "links"})
 public class Course {
     @Id
     @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
@@ -49,37 +48,42 @@ public class Course {
         this.lecturer = lecturer;
     }
 
+    @Transient
     public ObjectId getObjectId() {
         return objectId;
     }
 
+    @Transient
     public void setObjectId(ObjectId objectId) {
         this.objectId = objectId;
     }
 
-    @XmlAttribute
+    @Transient
     public long getId() {
         return id;
     }
 
+    @Transient
     public void setId(long id) {
         this.id = id;
     }
 
-    @XmlElement
+    @Transient
     public String getName() {
         return name;
     }
 
+    @Transient
     public void setName(String name) {
         this.name = name;
     }
 
-    @XmlElement
+    @Transient
     public String getLecturer() {
         return lecturer;
     }
 
+    @Transient
     public void setLecturer(String lecturer) {
         this.lecturer = lecturer;
     }

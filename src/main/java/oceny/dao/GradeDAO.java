@@ -1,5 +1,6 @@
 package oceny.dao;
 
+import com.mongodb.WriteResult;
 import oceny.db.MongoHandler;
 import oceny.resources.Course;
 import oceny.resources.Grade;
@@ -76,8 +77,8 @@ public class GradeDAO {
      */
     public boolean addGrade(long index, Grade grade) {
         //check if student exists
-        final Query<Student> query = datastore.createQuery(Student.class).field("index").equal(index);
-        Student student = query.get();
+        final Query<Student> studentQuery = datastore.createQuery(Student.class).field("index").equal(index);
+        Student student = studentQuery.get();
         if(student == null) {
             return false;
         }
@@ -90,11 +91,78 @@ public class GradeDAO {
         }
 
         datastore.save(grade);
-        //grade = datastore.createQuery(Grade.class).field("id").equal(grade.getId()).get();
         student.addGrade(grade);
         final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)
                 .set("grades", student.getGrades());
-        datastore.update(query, updateOperation);
+        datastore.update(studentQuery, updateOperation);
         return true;
+    }
+
+    /**
+     * update grade, or create new one if doesn't exist
+     * @param index index of student
+     * @param grade grade to update
+     * @return true if successful, false if course or student doesn't exist
+     */
+    public boolean updateGrade(long index, Grade grade) {
+        //check if student exists
+        final Query<Student> studentQuery = datastore.createQuery(Student.class).field("index").equal(index);
+        Student student = studentQuery.get();
+        if(student == null) {
+            return false;
+        }
+
+        //check if course exists
+        final Query<Course> courseQuery = datastore.createQuery(Course.class).field("objectId").equal(grade.getCourse().getObjectId());
+        Course course = courseQuery.get();
+        if (course == null) {
+            return false;
+        }
+
+        //check if grade exists
+        final Query<Grade> gradeQuery = datastore.createQuery(Grade.class).field("objectId").equal(grade.getCourse().getObjectId());
+        Grade checkIfExistsGrade = gradeQuery.get();
+        if (checkIfExistsGrade == null) {
+            datastore.save(grade);
+            student.addGrade(grade);
+        } else {
+            student.setGradeOnList(grade);
+        }
+
+        final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)
+                .set("grades", student.getGrades());
+        datastore.update(studentQuery, updateOperation);
+        return true;
+    }
+
+    /**
+     * delete grade
+     * @param index index of student
+     * @param id id of grade
+     * @return true if successful, false if grade or student not found
+     */
+    public boolean deleteGrade(long index, long id) {
+        //check if student exists
+        final Query<Student> studentQuery = datastore.createQuery(Student.class).field("index").equal(index);
+        Student student = studentQuery.get();
+        if(student == null) {
+            return false;
+        }
+
+        //check if grade exists
+        final Query<Grade> gradeQuery = datastore.createQuery(Grade.class).field("id").equal(id);
+        Grade grade = gradeQuery.get();
+        if (grade == null) {
+            return false;
+        } else {
+            //remove grade from student
+            student.removeGrade(grade);
+            final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)
+                    .set("grades", student.getGrades());
+            datastore.update(studentQuery, updateOperation);
+
+            WriteResult result = datastore.delete(gradeQuery);
+            return result.getN() > 0;
+        }
     }
 }

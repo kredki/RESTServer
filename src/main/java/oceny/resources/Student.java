@@ -12,11 +12,9 @@ import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
 import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Entity("students")
 @XmlRootElement
+@XmlType(propOrder = {"index", "firstName", "lastName", "birthday", "grades", "objectId", "links"})
 public class Student {
 
     @Id
@@ -83,25 +82,31 @@ public class Student {
         this.grades = new ArrayList<>();
     }
 
+    @Transient
     public ObjectId getObjectId() { return objectId; }
 
+    @Transient
     public void setObjectId(ObjectId objectId) { this.objectId = objectId; }
 
-    @XmlAttribute
+    @Transient
     public long getIndex() { return index; }
 
+    @Transient
     public void setIndex(long index) { this.index = index; }
 
-    @XmlElement
+    @Transient
     public String getFirstName() { return firstName; }
 
-    @XmlElement
+    @Transient
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    @Transient
     public String getLastName() { return lastName; }
 
-    @XmlElement
+    @Transient
     public Date getBirthday() { return birthday; }
 
-    @XmlElement
+    @Transient
     public List<Grade> getGrades() { return grades; }
 
     public void addGrade(Grade grade) {
