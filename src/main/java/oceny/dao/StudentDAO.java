@@ -1,12 +1,14 @@
 package oceny.dao;
 
 import com.mongodb.WriteResult;
+import oceny.DateParser;
 import oceny.db.MongoHandler;
 import oceny.resources.Student;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
+import java.util.Date;
 import java.util.List;
 
 public class StudentDAO {
@@ -29,6 +31,46 @@ public class StudentDAO {
 
     public List<Student> getStudentsList() {
         Query<Student> query = datastore.createQuery(Student.class);
+        return query.asList();
+    }
+
+    public List<Student> getStudentsList(String firstName, String lastName, String birthday, String birthdayFrom, String birthdayTo) {
+        Date birthdayDate;
+        Date birthdayFromDate;
+        Date birthdayToDate;
+        DateParser datePasrser = new DateParser("1700-01-01");
+
+        Query<Student> query;
+        if(!birthday.equals("")) {
+            datePasrser.setDate(birthday);
+            birthdayDate = datePasrser.getDate();
+
+            if(birthdayFrom.equals("")) {
+                datePasrser.setDate("1700-01-01");
+                birthdayFromDate = datePasrser.getDate();
+            } else {
+                datePasrser.setDate(birthdayFrom);
+                birthdayFromDate = datePasrser.getDate();
+            }
+            if(birthdayTo.equals("")) {
+                birthdayToDate = new Date(Long.MAX_VALUE);
+            } else {
+                datePasrser.setDate(birthdayTo);
+                birthdayToDate = datePasrser.getDate();
+            }
+
+            query = datastore.createQuery(Student.class)
+                    .field("firstName").containsIgnoreCase(firstName)
+                    .field("lastName").containsIgnoreCase(lastName)
+                    .field("birthday").greaterThanOrEq(birthdayFromDate)
+                    .field("birthday").lessThanOrEq(birthdayToDate);
+        } else {
+            query = datastore.createQuery(Student.class)
+                    .field("firstName").containsIgnoreCase(firstName)
+                    .field("lastName").containsIgnoreCase(lastName)
+                    .field("birthday").equal(birthday);
+        }
+
         return query.asList();
     }
 

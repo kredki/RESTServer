@@ -30,7 +30,7 @@ public class StudentService {
         if (isDefaultValue(firstName, lastName, birthday, birthdayFrom, birthdayTo)) {
             return studentDAO.getStudentsList();
         } else {
-            //todo
+            return studentDAO.getStudentsList(firstName, lastName, birthday, birthdayFrom, birthdayTo);
         }
     }
 
