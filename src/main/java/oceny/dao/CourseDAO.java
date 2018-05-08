@@ -29,8 +29,8 @@ public class CourseDAO {
         }
     }
 
-    public List<Course> getCoursesList() {
-        Query<Course> query = datastore.createQuery(Course.class);
+    public List<Course> getCoursesList(String lecturer) {
+        Query<Course> query = datastore.createQuery(Course.class).field("lecturer").containsIgnoreCase(lecturer);
         return query.asList();
     }
 

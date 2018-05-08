@@ -29,8 +29,8 @@ public class CourseService {
 
     @GET
     @Path("/courses")
-    public List<Course> getAllCourses() {
-        return courseDAO.getCoursesList();
+    public List<Course> getCoursesList(@DefaultValue("") @QueryParam("lecturer") String lecturer) {
+        return courseDAO.getCoursesList(lecturer);
     }
 
     @POST

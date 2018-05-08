@@ -31,8 +31,11 @@ public class GradeServices {
 
 
     @GET
-    public List<Grade> getStudentGrades(@PathParam("index") long index) {
-        List<Grade> grades = gradeDAO.getStudentGradesList(index);
+    public List<Grade> getStudentGrades(@DefaultValue("0") @QueryParam("course") Long courseId,
+                                        @DefaultValue("2.0") @QueryParam("gradegreater") float gradeGreater,
+                                        @DefaultValue("5.0") @QueryParam("gradeless") float gradeLess,
+                                        @PathParam("index") long index) {
+        List<Grade> grades = gradeDAO.getStudentGradesList(index, courseId, gradeGreater, gradeLess);
         if(grades == null) {
             throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         } else {

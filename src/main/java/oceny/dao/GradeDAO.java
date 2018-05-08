@@ -10,6 +10,7 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GradeDAO {
@@ -35,13 +36,29 @@ public class GradeDAO {
      * @param index index of student
      * @return list of grades of student, null when student not found
      */
-    public List<Grade> getStudentGradesList(long index) {
+    public List<Grade> getStudentGradesList(long index, Long courseId, float gradeGreater, float gradeLess) {
         Query<Student> query = datastore.createQuery(Student.class).field("index").equal(index);
         Student student = query.get();
         if(student == null) {
             return null;
         } else {
-            return query.get().getGrades();
+            List<Grade> gradeList = query.get().getGrades();
+            List<Grade> result = new ArrayList<>();
+            for (Grade g : gradeList) {
+                if(courseId != 0) {
+                    float gradeValue = g.getValue();
+                    if(g.getCourse().getId() == courseId &&
+                            gradeValue >= gradeGreater && gradeValue <= gradeLess) {
+                        result.add(g);
+                    }
+                } else {
+                    float gradeValue = g.getValue();
+                    if(gradeValue >= gradeGreater && gradeValue <= gradeLess) {
+                        result.add(g);
+                    }
+                }
+            }
+            return result;
         }
     }
 
