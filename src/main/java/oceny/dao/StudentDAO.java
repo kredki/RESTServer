@@ -41,9 +41,7 @@ public class StudentDAO {
         DateParser datePasrser = new DateParser("1700-01-01");
 
         Query<Student> query;
-        if(!birthday.equals("")) {
-            datePasrser.setDate(birthday);
-            birthdayDate = datePasrser.getDate();
+        if(birthday.equals("")) {
 
             if(birthdayFrom.equals("")) {
                 datePasrser.setDate("1700-01-01");
@@ -65,10 +63,12 @@ public class StudentDAO {
                     .field("birthday").greaterThanOrEq(birthdayFromDate)
                     .field("birthday").lessThanOrEq(birthdayToDate);
         } else {
+            datePasrser.setDate(birthday);
+            birthdayDate = datePasrser.getDate();
             query = datastore.createQuery(Student.class)
                     .field("firstName").containsIgnoreCase(firstName)
                     .field("lastName").containsIgnoreCase(lastName)
-                    .field("birthday").equal(birthday);
+                    .field("birthday").equal(birthdayDate);
         }
 
         return query.asList();
