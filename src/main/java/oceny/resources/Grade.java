@@ -1,5 +1,6 @@
 package oceny.resources;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import oceny.DateParser;
 import oceny.ObjectIdJaxbAdapter;
 import oceny.db.MongoHandler;
@@ -33,6 +34,7 @@ public class Grade {
     @XmlElement
     private float value;
     @XmlElement
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="CET")
     private Date date;
     @XmlElement
     @Reference

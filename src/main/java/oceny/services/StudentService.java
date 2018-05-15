@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -22,15 +23,21 @@ public class StudentService {
 
     @GET
     @Path("/students")
-    public List<Student> getAllStudentsJson(@DefaultValue(defaultString) @QueryParam("firstname") String firstName,
+    public GenericEntity<List<Student>> getAllStudentsJson(@DefaultValue(defaultString) @QueryParam("firstname") String firstName,
                                             @DefaultValue(defaultString) @QueryParam("lastname") String lastName,
                                             @DefaultValue(defaultString) @QueryParam("birthday") String birthday,
                                             @DefaultValue(defaultString) @QueryParam("birthdayfrom") String birthdayFrom,
                                             @DefaultValue(defaultString) @QueryParam("birthdayto") String birthdayTo) {
         if (isDefaultValue(firstName, lastName, birthday, birthdayFrom, birthdayTo)) {
-            return studentDAO.getStudentsList();
+            List<Student> students = studentDAO.getStudentsList();
+            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {
+            };
+            return genericEntity;
         } else {
-            return studentDAO.getStudentsList(firstName, lastName, birthday, birthdayFrom, birthdayTo);
+            List<Student> students = studentDAO.getStudentsList(firstName, lastName, birthday, birthdayFrom, birthdayTo);
+            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {
+            };
+            return genericEntity;
         }
     }
 
@@ -40,7 +47,7 @@ public class StudentService {
         studentDAO.addStudent(student);
         URI uri = null;
         try {
-            uri = new URI("http://localhost:8000/oceny/students");
+            uri = new URI("http://localhost:8000/oceny/students/" + student.getIndex());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

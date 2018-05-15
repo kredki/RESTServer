@@ -48,7 +48,7 @@ public class GradeServices {
         if (gradeDAO.addGrade(index, grade)) {
             URI uri = null;
             try {
-                uri = new URI("http://localhost:8000/oceny/students/" + index +"/grades");
+                uri = new URI("http://localhost:8000/oceny/students/" + index +"/grades/" + grade.getId());
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }

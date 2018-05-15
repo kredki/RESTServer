@@ -39,7 +39,7 @@ public class CourseService {
         courseDAO.addCourse(course);
         URI uri = null;
         try {
-            uri = new URI("http://localhost:8000/oceny/courses");
+            uri = new URI("http://localhost:8000/oceny/courses/" + course.getId());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
