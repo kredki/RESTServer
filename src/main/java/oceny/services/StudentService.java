@@ -30,13 +30,11 @@ public class StudentService {
                                             @DefaultValue(defaultString) @QueryParam("birthdayto") String birthdayTo) {
         if (isDefaultValue(firstName, lastName, birthday, birthdayFrom, birthdayTo)) {
             List<Student> students = studentDAO.getStudentsList();
-            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {
-            };
+            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {};
             return genericEntity;
         } else {
             List<Student> students = studentDAO.getStudentsList(firstName, lastName, birthday, birthdayFrom, birthdayTo);
-            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {
-            };
+            GenericEntity<List<Student>> genericEntity = new GenericEntity<List<Student>>(students) {};
             return genericEntity;
         }
     }

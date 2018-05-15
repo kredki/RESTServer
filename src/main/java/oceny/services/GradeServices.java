@@ -11,6 +11,7 @@ import oceny.resources.Grade;
 import oceny.resources.Student;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -31,7 +32,7 @@ public class GradeServices {
 
 
     @GET
-    public List<Grade> getStudentGrades(@DefaultValue("0") @QueryParam("course") Long courseId,
+    public GenericEntity<List<Grade>> getStudentGrades(@DefaultValue("0") @QueryParam("course") Long courseId,
                                         @DefaultValue("2.0") @QueryParam("gradegreater") float gradeGreater,
                                         @DefaultValue("5.0") @QueryParam("gradeless") float gradeLess,
                                         @PathParam("index") long index) {
@@ -39,7 +40,8 @@ public class GradeServices {
         if(grades == null) {
             throw new NotFoundException(new JsonError("Error", "Student " + index + " not found"));
         } else {
-            return grades;
+            GenericEntity<List<Grade>> genericEntity = new GenericEntity<List<Grade>>(grades) {};
+            return genericEntity;
         }
     }
 

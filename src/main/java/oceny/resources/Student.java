@@ -84,31 +84,25 @@ public class Student {
         this.grades = new ArrayList<>();
     }
 
-    @Transient
     public ObjectId getObjectId() { return objectId; }
 
-    @Transient
+    @XmlTransient
     public void setObjectId(ObjectId objectId) { this.objectId = objectId; }
 
-    @Transient
     public long getIndex() { return index; }
 
-    @Transient
+    @XmlTransient
     public void setIndex(long index) { this.index = index; }
 
-    @Transient
     public String getFirstName() { return firstName; }
 
-    @Transient
+    @XmlTransient
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
-    @Transient
     public String getLastName() { return lastName; }
 
-    @Transient
     public Date getBirthday() { return birthday; }
 
-    @Transient
     public List<Grade> getGrades() { return grades; }
 
     public void addGrade(Grade grade) {

@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -29,8 +30,10 @@ public class CourseService {
 
     @GET
     @Path("/courses")
-    public List<Course> getCoursesList(@DefaultValue("") @QueryParam("lecturer") String lecturer) {
-        return courseDAO.getCoursesList(lecturer);
+    public GenericEntity<List<Course>> getCoursesList(@DefaultValue("") @QueryParam("lecturer") String lecturer) {
+        List<Course> courses = courseDAO.getCoursesList(lecturer);
+        GenericEntity<List<Course>> genericEntity = new GenericEntity<List<Course>>(courses) {};
+        return genericEntity;
     }
 
     @POST
@@ -48,7 +51,7 @@ public class CourseService {
 
     @GET
     @Path("/courses/{id}")
-    public Course getCourseJson(@PathParam("id") long id) {
+    public Course getCourse(@PathParam("id") long id) {
         Course course = courseDAO.getCourse(id);
         if (course != null) {
             return course;

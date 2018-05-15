@@ -62,52 +62,47 @@ public class Grade {
         this.course = course;
     }
 
-    @Transient
     public long getId() {
         return id;
     }
 
-    @Transient
+    @XmlTransient
     public void setId(long id) {
         this.id = id;
     }
 
-    @Transient
     public float getValue() {
         return value;
     }
 
-    @Transient
+    @XmlTransient
     public void setValue(float value) {
         this.value = value;
     }
 
-    @Transient
     public Date getDate() {
         return date;
     }
 
-    @Transient
+    @XmlTransient
     public void setDate(Date date) {
         this.date = date;
     }
 
-    @Transient
     public Course getCourse() {
         return course;
     }
 
-    @Transient
+    @XmlTransient
     public void setCourse(Course course) {
         this.course = course;
     }
 
-    @Transient
     public long getStudentOwnerIndex() {
         return studentOwnerIndex;
     }
 
-    @Transient
+    @XmlTransient
     public void setStudentOwnerIndex(long studentOwnerIndex) {
         this.studentOwnerIndex = studentOwnerIndex;
     }

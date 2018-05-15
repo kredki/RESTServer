@@ -14,7 +14,6 @@ import org.mongodb.morphia.query.UpdateOperations;
 import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.beans.Transient;
 import java.util.List;
 
 @Entity("courses")
@@ -48,42 +47,38 @@ public class Course {
         this.lecturer = lecturer;
     }
 
-    @Transient
     public ObjectId getObjectId() {
         return objectId;
     }
 
-    @Transient
+    @XmlTransient
     public void setObjectId(ObjectId objectId) {
         this.objectId = objectId;
     }
 
-    @Transient
     public long getId() {
         return id;
     }
 
-    @Transient
+    @XmlTransient
     public void setId(long id) {
         this.id = id;
     }
 
-    @Transient
     public String getName() {
         return name;
     }
 
-    @Transient
+    @XmlTransient
     public void setName(String name) {
         this.name = name;
     }
 
-    @Transient
     public String getLecturer() {
         return lecturer;
     }
 
-    @Transient
+    @XmlTransient
     public void setLecturer(String lecturer) {
         this.lecturer = lecturer;
     }
