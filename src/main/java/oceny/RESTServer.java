@@ -19,6 +19,7 @@ public class RESTServer {
         // in com.example.rest package
         final ResourceConfig rc = new ResourceConfig().packages("oceny")
                 .packages("org.glassfish.jersey.examples.linking").register(DeclarativeLinkingFeature.class);
+        rc.register(CustomHeaders.class);
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
