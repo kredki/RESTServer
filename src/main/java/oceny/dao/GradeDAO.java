@@ -137,7 +137,7 @@ public class GradeDAO {
         }
 
         //check if grade exists
-        final Query<Grade> gradeQuery = datastore.createQuery(Grade.class).field("objectId").equal(grade.getCourse().getObjectId());
+        final Query<Grade> gradeQuery = datastore.createQuery(Grade.class).field("objectId").equal(grade.getObjectId());
         Grade checkIfExistsGrade = gradeQuery.get();
         if (checkIfExistsGrade == null) {
             datastore.save(grade);
@@ -149,6 +149,12 @@ public class GradeDAO {
         final UpdateOperations<Student> updateOperation = datastore.createUpdateOperations(Student.class)
                 .set("grades", student.getGrades());
         datastore.update(studentQuery, updateOperation);
+
+        final UpdateOperations<Grade> updateGradeOperation = datastore.createUpdateOperations(Grade.class)
+                .set("value", grade.getValue())
+                .set("date", grade.getDate())
+                .set("course", course);
+        datastore.update(gradeQuery, updateGradeOperation);
         return true;
     }
 

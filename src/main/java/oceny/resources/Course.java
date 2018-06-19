@@ -87,7 +87,7 @@ public class Course {
         //get id from db and increment it
         Datastore datastore = MongoHandler.getInstance().getDatastore();
         final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
-        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("courseLastId");
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("courseLastId", 1);
         Indexes indexes = datastore.findAndModify(findQuery, operation );
         return indexes.getCourseLastId();
     }

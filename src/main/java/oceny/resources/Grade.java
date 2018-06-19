@@ -107,10 +107,12 @@ public class Grade {
         this.studentOwnerIndex = studentOwnerIndex;
     }
 
+    public ObjectId getObjectId() { return objectId; }
+
     private long getIdFromDB() {
         Datastore datastore = MongoHandler.getInstance().getDatastore();
         final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
-        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("gradeLastId");
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("gradeLastId", 1);
         Indexes indexes = datastore.findAndModify(findQuery, operation );
         return indexes.getGradeLastId();
     }

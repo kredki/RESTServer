@@ -143,7 +143,7 @@ public class Student {
         //get index from db and increment it
         Datastore datastore = MongoHandler.getInstance().getDatastore();
         final Query<Indexes> findQuery = datastore.createQuery(Indexes.class);
-        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("studentLastId");
+        UpdateOperations<Indexes> operation = datastore.createUpdateOperations(Indexes.class).inc("studentLastId", 1);
         Indexes indexes = datastore.findAndModify(findQuery, operation );
 
         //update index in db
