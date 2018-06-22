@@ -1,6 +1,7 @@
 package oceny.services;
 
 import oceny.dao.CourseDAO;
+import oceny.exceptions.CourseHasGradesException;
 import oceny.exceptions.JsonError;
 import oceny.exceptions.NotFoundException;
 import oceny.lists.CourseList;
@@ -80,7 +81,7 @@ public class CourseService {
         if (courseDAO.deleteCourse(id)) {
             return Response.status(202).build();
         } else {
-            throw new NotFoundException(new JsonError("Error", "Course " + id + " not deleted. Course have assigened grades or not exists."));
+            throw new CourseHasGradesException(new JsonError("Error", "Course " + id + " not deleted. Course have assigened grades or not exists."));
         }
     }
 }
