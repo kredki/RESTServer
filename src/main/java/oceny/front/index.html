@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    
+    <title>Oceny</title>
+</head>
+
+<body>
+   <script  type="text/javascript"  src="js/lib/jquery-3.3.1.js"></script>
+    <script  type="text/javascript"  src="js/lib/knockout-3.4.2.js"></script>
+    <script  type="text/javascript"  src="js/lib/knockout-mapping-debug.js"></script>
+    <script  type="text/javascript"  src="js/lib/knockout-mapping.js"></script>
+    <header>
+        <img alt="logo" src="logo.png">
+        <h1>Students grades manager</h1>
+    </header>
+
+
+    <article class="tab">
+        <nav>
+           <h3>Menu</h3>
+            <a href="#maipage">Main page</a><br>
+            <a href="#students">Students list</a><br>
+            <a href="#courses">Courses lists</a>
+        </nav>
+
+        <article id="maipage">
+            <h2>Main page</h2>
+        </article>
+
+        <article id="students">
+            <h2>Students list</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>Index <input type="number" disabled></th>
+                        <th>First name <input type="text" data-bind="value: searchStudentFirstName"></th>
+                        <th>Last name <input type="text" data-bind="value: searchStudentLastName"></th>
+                        <th>Birthday <input type="date" data-bind="value: searchStudentBirthday"></th>
+                        <th>Actions <input type="submit" value="Search" data-bind="click: $root.searchStudent">
+                            <input type="submit" value="Add Student" formaction="#addstudent"></th>
+                    </tr>
+                    <!-- ko foreach: students -->
+                    <tr>
+                        <td><input type="number" data-bind="value: index" readonly></td>
+                        <td><input type="text" data-bind="value: firstName" placeholder="First Name" required></td>
+                        <td><input type="text" data-bind="value: lastName" placeholder="Last Name" required></td>
+                        <td><input type="date" data-bind="value: birthday" required></td>
+                        <td><input type="submit" value="See grades" data-bind="click: $root.seeGrades.bind($data, $index())"> <input type="submit" value="Delete" data-bind="click: $root.deleteStudent.bind($data, $index())">
+                            <input type="submit" value="Update" data-bind="click: $root.updateStudent.bind($data, $index())"></td>
+                    </tr>
+                    <!-- /ko -->
+                </table>
+            </form>
+        </article>
+
+        <article id="addstudent">
+            <h2>Add student</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Birthday</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="First Name" required data-bind="value: newStudentFirstName"></td>
+                        <td><input type="text" placeholder="Last Name" required data-bind="value: newStudentLastName"></td>
+                        <td><input type="date" required data-bind="value: newStudentBirthday"></td>
+                        <td><input type="submit" value="Add Student" data-bind="click: addStudent"></td>
+                    </tr>
+                </table>
+            </form>
+        </article>
+
+        <article id="courses">
+            <h2>Courses list</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>Name <input type="text" disabled></th>
+                        <th>Lecturer <input type="text" data-bind="value: searchCourseLecturer"></th>
+                        <th>Actions <input type="submit" value="Search" data-bind="click: $root.searchCourse">
+                            <input type="submit" value="Add course" formaction="#addcourse"></th>
+                    </tr>
+                    <!-- ko foreach: courses -->
+                    <tr>
+                        <td><input type="text" data-bind="value: name" placeholder="Name" required></td>
+                        <td><input type="text" data-bind="value: lecturer" placeholder="Lecturer" required></td>
+                        <td><input type="submit" value="Delete" data-bind="click: $root.deleteCourse.bind($data, $index())">
+                            <input type="submit" value="Update" data-bind="click: $root.updateCourse.bind($data, $index())"></td>
+                    </tr>
+                    <!-- /ko -->
+                </table>
+            </form>
+        </article>
+        <article id="addcourse">
+            <h2>Add course</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Lecture</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Name" required data-bind="value: newCourseName"></td>
+                        <td><input type="text" placeholder="Lecturer" required data-bind="value: newCourseLecturer"></td>
+                        <td><input type="submit" value="Add course" data-bind="click: addCourse"></td>
+                    </tr>
+                </table>
+            </form>
+        </article>
+
+        <article id="grades">
+            <h2>Grades list</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>Value <select id="gradeValueSelect">
+                            <option value="2.0">2.0</option>
+                            <option value="3.0">3.0</option>
+                            <option value="3.5">3.5</option>
+                            <option value="4.0">4.0</option>
+                            <option value="4.5">4.5</option>
+                            <option value="5.0">5.0</option>
+                            </select></th>
+                        <th>Course Name <select id="gradeCourseSelect" data-bind="options: courses,
+                        optionsText: 'name',
+                        optionsValue: 'id',
+                            optionsCaption: 'Any course',
+                        "></select>
+                        </th>
+                        <th>Date</th>
+                        <th>Actions <input type="submit" value="Search" data-bind="click: $root.searchGrade">
+                            <input type="submit" value="Add grade" formaction="#addgrade"></th>
+                    </tr>
+                    <!-- ko foreach: grades -->
+                    <tr>
+                        <td><input type="number" name="gradeValue" step=0.5 min=2.0 max=5.0 value=2.0
+                                             title="Value" data-bind="value: value" placeholder="Value"></td>
+                        <td><select id="courseSelect" name="id" required data-bind="options: $parent.courses,
+	                                                      optionsText: function(i) { return i.name(); },
+	                                                      optionsValue: function(i) { return i.id(); },
+	                                                      optionsCaption: 'Choose course',
+	                                                      value: course.id,">
+	
+	                        </select></td>
+                        <td><input type="date" data-bind="value: date" required></td>
+                        <td><input type="submit" value="Delete" data-bind="click: $root.deleteGrade.bind($data, $index())">
+                            <input type="submit" value="Update" data-bind="click: $root.updateGrade.bind($data, $index())"></td>
+                    </tr>
+                    <!-- /ko -->
+                </table>
+            </form>
+
+        </article>
+        <article id="addgrade">
+            <h2>Add grade</h2>
+            <form>
+                <table>
+                    <tr>
+                        <th>Value</th>
+                        <th>Course Name</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr>
+                        <td><select data-bind="value: newGradeValue">
+                            <option value="2.0">2.0</option>
+                            <option value="3.0">3.0</option>
+                            <option value="3.5">3.5</option>
+                            <option value="4.0">4.0</option>
+                            <option value="4.5">4.5</option>
+                            <option value="5.0">5.0</option>
+                            </select></td>
+                        <td><select data-bind="options: courses,
+                        optionsText: 'name',
+                        
+                            value: selectedCopurse
+                        "></select></td>
+                        <td><input type="submit" value="Add grade" data-bind="click: addGrade"></td>
+                    </tr>
+                </table>
+            </form>
+        </article>
+
+    </article>
+
+    <footer>
+        <br>
+        Autor: Imię Nazwisko<br>
+        <p><a href="http://www.put.poznan.pl">PP</a></p>
+    </footer>
+<script  type="text/javascript"  src="js/script.js"></script>
+</body>
+
+</html>
